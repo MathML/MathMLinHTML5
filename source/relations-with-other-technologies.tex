@@ -1,0 +1,265 @@
+\section{Relation with other technologies}
+
+\subsection{DOM, HTML, SVG and Javascript}
+
+User agents must use a HTML5 \cite{HTML5} parser to build a DOM tree
+\cite{DOM1} from the source code of web pages. In particular, they must follow
+the rules describing when elements must be in the MathML namespace and must
+recognize the entity definitions from the HTML MathML entity set of
+\cite{XMLEntities}. They must also take into account the following integration
+points between SVG, MathML and HTML as allowed by \cite{ValidatorSchemas}:
+
+\begin{enumerate}
+\item The {\tt <math>} element can be used at any position permitted for
+  phrasing content or inside SVG {\tt <foreignObject>} elements.
+\item The {\tt <svg>} element can be used inside {\tt <annotation-xml>}
+  elements with encoding {\tt SVG1.1} or {\tt image/svg+xml}.
+\item The {\tt <html>} element and flow content can be used inside
+  {\tt <annotation-xml>} elements with encoding {\tt application/xhtml+xml}
+  or {\tt text/html}.
+\item Any phrasing element can be used inside {\tt <mtext>} elements.
+\end{enumerate}
+
+From this DOM tree, user agents must provide a visual representation of the
+document. The DOM tree may be dynamically modified using Javascript
+\cite{ECMA262} and the user agents must keep the visual representation in
+synchronization with the DOM tree.
+
+When evaluating the SVG {\tt requiredExtensions} attribute \cite{SVG11},
+user agents must claim support for the extension of name the MathML namespace
+{\tt http://www.w3.org/1998/Math/MathML}. An algorithm to decide the visible
+child of the {\tt <semantics>} element is proposed in ????????.
+
+\subsection{Text layout and Open Font Format}
+
+User agents must be able to perfom complex text layout \cite{CTL} using
+fonts under the Open Font Format \cite{OpenFontFormat3}. In particular, they
+must implement bidirectional rendering and shaping of Arabic scripts.
+User agents should be able to render some graphical outlines (e.g. fraction
+or top radical bars) the same way as normal text and thus should apply to them
+similar CSS properties like {\tt text-shadow} or {\tt color}.
+
+User agents must render the text within MathML token elements with the
+{\tt math} script tag \cite{OpenFontFormat3}. When determining the
+text metrics, they must honor the USE\_TYPO\_METRICS flag from the OS/2 table
+\cite{OpenFontFormat3}.
+They must support glyph selections via the OpenType font
+features {\tt ssty} (Script Style), {\tt flac}
+(Flattened Accents over Capitals), {\tt dtls} (Dotless Forms)
+and {\tt rtlm} (Right-to-left mirrored forms) \cite{OpenFontFormat3}.
+
+User agents may also support the CSS {\tt font-variant-alternates} property
+and corresponding OpenType font features \cite{CSS3Font} \cite{OpenFontFormat3}.
+That way,  font designers and page
+authors can rely on it to provide a calligraphic style for the
+Unicode Mathematical script characters. This allows to distinguish between
+LaTeX's {\tt mathscr} and {\tt mathcal} commands.
+
+User agents must be able to read information from the
+OpenType MATH table \cite{OpenFontFormat3}.
+In particular they must be able to read the values from the MathConstants
+table. They must also be able to use the MathVariants subtable to solve the
+following problem: given a particular default glyph shape and a
+certain width or height, find a variant shape glyph (or construct created by
+putting several glyphs together) that has the required measurement.
+See ???? (section about mo operators) for more details.
+
+\subsection{CSS}
+
+\subsubsection{Properties}
+
+User agents must support the CSS language \cite{CSS2} and take special styling
+into account when building the visual representation of the document. We assume
+that at least the following properties are supported:
+
+\begin{enumerate}
+\item {\tt display}: at least inline, block, inline-table, table-row,
+  table-cell and none.
+\item {\tt direction}
+\item {\tt font} property and its shorthands.
+\item {\tt background} and {\tt color}
+\item {\tt visibility}
+\end{enumerate}
+
+In addition, this specification introduces new non-animatable CSS properties:
+
+\begin{enumerate}
+\item {\tt mathml-script-level}
+\item {\tt mathml-script-size-multiplier}
+\item {\tt mathml-script-min-size}
+\item {\tt mathml-math-variant}
+\item {\tt mathml-math-style}
+\end{enumerate}
+
+\subsubsection{Box Model}
+
+User agents must also follow the rules described in section 4.7.14
+Embedded content, MathML of \cite{HTML5}, in particular the equivalence with
+implicit {\tt mtext} and {\tt merror} to handle non-conforming MathML markup.
+
+MathML elements have the following box model. The {\tt <math>} root may have
+inline or block display while tabular MathML elements have table, table-row and
+table-cell display (see ????). The {\tt <math>} and {\tt <mtd>} elements
+generate an anonymous {\tt <mrow>} MathML box child that contains the boxes of
+their children and use the box parameters below to layout this anonymous
+{\tt <mrow>} box.
+No line breaking can happen within MathML boxes and the min-content width is
+equal to the max-content width, these are simply called the intrinsic width.
+Each MathML box has the following parameters:
+
+\begin{enumerate}
+\item intrinsic width $W$.
+\item logical width $w$, ascent above the origin $a$ and descent below the
+  origin $b$. The height is then $a+b$.
+\item ink ascent $A$ and descent $B$, corresponding to the exact box enclosing
+  ink of text and bars within the MathML box.
+\end{enumerate}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[yscale=-1]
+  \draw[->] (0,0) -- (15,0) node[below] {$x$};
+  \draw[->] (0,0) -- (0,6) node[right] {$y$};
+  \draw[dashed,blue] (0,-2) -- (13.5,-2) -- (13.5,4) -- (0,4) -- cycle;
+  \MathMLBox{0}{0}{1}{1}{red}
+  \MathMLBoxMetrics{0}{0}{1}{1}{red}{1}
+  \MathMLBox{6}{2}{1.5}{1}{green}
+  \MathMLBoxMetrics{6}{2}{1.5}{1}{green}{2}
+\end{tikzpicture}
+\label{MathMLBoxModel}
+\end{figure}
+
+For MathML element containing only text nodes or foreign elements, we assume
+that the content is simple enough to determine these values. For example,
+in most case, this is just a single text node and $w = W$.
+A MathML element containing only other MathML elements follow special rules to
+layout their children at position $(x_i,y_i)$ with parameters
+$W_i,w_i,a_i,b_i,A_i,B_i$. Then as a general rule, its box parameters are given
+by taking the union of child boxes, that is:
+%
+$$w = \left(\max_{1 \leq i \leq n } {x_i + w_i}\right) -
+      \left(\min_{1 \leq i \leq n} x_i\right)$$
+$$W = \left(\max_{1 \leq i \leq n } {x_i + W_i}\right) -
+      \left(\min_{1 \leq i \leq n} x_i\right)$$
+$$a = \max_{1 \leq i \leq n } {a_i - y_i}$$
+$$b = \max_{1 \leq i \leq n } {b_i + y_i}$$
+$$A = \max_{1 \leq i \leq n } {A_i - y_i}$$
+$$B = \max_{1 \leq i \leq n } {B_i + y_i}$$
+%
+
+Note that the schemas in this specification are drawn assuming left-to-right
+directionality. If the CSS {\tt direction} is set to right-to-left, then the
+elements should be layout by making the $x$-axis pointing from right-to-left.
+
+Detailed rules as well as possible additional spacing are given in sections ???.
+
+\subsubsection{User Agent Stylesheet for MathML}
+
+Because mathematical formulas are generally written with special fonts, the
+default user agent stylesheet must reset the CSS {\tt font-family} on the
+{\tt math} element to {\tt serif}. User agents should then use their own
+mechanism to try and interpret this {\tt serif} value on the {\tt math} element
+as a font with an OpenType MATH table.
+
+User agents may use the following user agent stylesheet to style MathML
+elements. (FIXME: Blink does not allow universal selectors in user agent
+stylesheet. Should we use explicit tag names?)
+
+\begin{lstlisting}
+@namespace url(http://www.w3.org/1998/Math/MathML);
+
+/* The <math> element */
+math {
+  direction: ltr;
+  display: inline;
+  font-size: inherit;
+  font-style: normal;
+  font-family: serif;
+  mathml-math-style: inline;
+}
+math[display="block"] {
+  display: block;
+  text-align: center;
+  mathml-math-style: display;
+}
+math[display="inline"] {
+  display: inline;
+  mathml-math-style: inline;
+}
+math[displaystyle="false"] {
+  mathml-math-style: inline;
+}
+math[displaystyle="true"] {
+  mathml-math-style: display;
+}
+
+/* Tabular elements */
+mtable {
+  display: inline-table;
+  border-collapse: separate;
+  border-spacing: 0;
+  mathml-math-style: inline;
+}
+mtable[displaystyle="true"] {
+  mathml-math-style: display;
+}
+mtr, mlabeledtr {
+  display: table-row;
+  vertical-align: baseline;
+}
+mtd {
+  display: table-cell;
+  vertical-align: inherit;
+  text-align: center;
+}
+mlabeledtr > mtd:first-child {
+  display: none;
+}
+
+/* The <ms> element */
+ms {
+  display: inline;
+}
+ms:before, ms:after {
+  content: "\0022"
+}
+ms[lquote]:before {
+  content: attr(lquote)
+}
+ms[rquote]:after {
+  content: attr(rquote)
+}
+
+/* The <mphantom> element */
+mphantom {
+  visibility: hidden;
+}
+
+/* Scriptlevel and displaystyle for other elements */
+mstyle[displaystyle="false"] {
+  mathml-math-style: inline;
+}
+mstyle[displaystyle="true"] {
+  mathml-math-style: display;
+}
+mfrac > * {
+  mathml-script-level: auto;
+  mathml-math-style: inline;
+}
+mroot > :not(:first-child) {
+  mathml-script-level: +2;
+  mathml-math-style: inline;
+}
+msub > :not(:first-child),
+msup > :not(:first-child),
+msubsup > :not(:first-child),
+mmultiscripts > :not(:first-child) {
+  mathml-script-level: +1;
+  mathml-math-style: inline;
+}
+munder > :not(:first-child),
+mover > :not(:first-child),
+munderover > :not(:first-child) {
+  mathml-math-style: inline;
+}
+\end{lstlisting}
