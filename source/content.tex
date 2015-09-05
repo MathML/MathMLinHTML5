@@ -28,7 +28,7 @@ interpreted as a multiple of the default rule thickness and
 the named values "thin", "medium" and "thick" are interpreted as
 50\%, 100\%, 200\%.
 
-If the actual linethickness is nonzero, the {\tt mfrac} element is layout as
+If the actual linethickness is nonzero, the {\tt mfrac} element is laid out as
 shown on \ref{FractionBoxModel}. The width is given by the maximum width of the
 numerator and denominator and the numerator and denominator are horizontally
 centered. A fraction bar with the actual thickness is drawn centered on the
@@ -67,7 +67,7 @@ by {\tt FractionDenominatorGapMin} and
 \label{FractionBoxModel}
 \end{figure}
 
-If the actual linethickness zero, the {\tt mfrac} element is instead layout as
+If the actual linethickness zero, the {\tt mfrac} element is instead laid out as
 shown on \ref{StackBoxModel}. The relevant shift values are now
 {\tt StackTopShiftUp},
 {\tt StackBottomShiftDown} in inline style and
@@ -135,9 +135,21 @@ This can be achieved with the following style in the user agent stylesheet:
 \end{lstlisting}
 
 The line thickness of the overbar is given by {\tt RadicalRuleThickness}.
-The gap between the overbar and base is given by {\tt RadicalVerticalGap} 
+The gap between the overbar and base is given by {\tt RadicalVerticalGap}
 in inline style and {\tt RadicalDisplayStyleVerticalGap} in display style.
-The ascent above the overbase is given by {\tt RadicalExtraAscender}
+The ascent above the overbase is given by {\tt RadicalExtraAscender}. The
+surd is drawn by trying to vertically stretch the character U+221A SQUARE ROOT
+to at least the sum of the ink height of the base, the radical gap and the
+radical rule thickness. If the CSS {\tt direction} is set to right-to-left,
+then the surd is actually drawn from the glyph obtained by mirroring
+U+221A SQUARE ROOT via the {\tt rtlm} OpenType feature.
+
+The {\tt msqrt} element is laid out as shown on \ref{SquareRootBoxModel}.
+The width is given by the sum of the width of the surd and of the base.
+The baseline of the square root matches the baseline of the base.
+The ink box is determined from the ink boxes of the surd and base while the
+logical box takes into account the extra ascender
+(add an extra descender ?????).
 
 \begin{figure}
 \centering
@@ -167,4 +179,49 @@ The ascent above the overbase is given by {\tt RadicalExtraAscender}
   (4.5,-1) node[below left]{Radical Gap} -- (4.5,-.5);
 \end{tikzpicture}
 \label{SquareRootBoxModel}
+\end{figure}
+
+The {\tt msqrt} element is laid out as shown on \ref{RootBoxModel}.
+We start by ignoring the index and we layout the base and radical symbol as
+shown on \ref{SquareRootBoxModel} to obtain a box $B$.
+The horizontal metrics of the {\tt mroot} element are obtained by putting
+{\tt RadicalKernBeforeDegree}
+before the index, then putting the index, then a kerning
+of {\tt RadicalKernAfterDegree}
+after the index and finally placing $B$. In general
+the kerning before the index is positive while the kerning after is negative,
+which means that the root element will have some space before it and that the
+index will overlap the surd.
+For the vertical metrics of the {\tt mroot} element, we first take the baseline
+of $B$ as the baseline. Then if we graduate the ink height of $B$ with a linear
+scale going from 0 (bottom) to 1 (top) then the baseline of the index will be
+vertically positioned at coordinate {\tt RadicalDegreeBottomRaisePercent}.
+Finally, we take into consideration the index box and $B$ to deduce the metrics
+for the whole box of the {\tt mroot} element.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[yscale=-1]
+  \begin{scope}[shift={(6,0)}]
+  \fill[green!20]
+  (5,-2.5) -- (-2,-2.5) -- (-2,2) --
+  (-4,-1) -- (-4.7,-.3) -- (-2.7,2.7) -- (-2,3.75) -- (-1,3.75) --
+  (-1,-1.5) -- (5,-1.5) -- (5,-2.5);
+  \draw[green] (-4.7,-3) -- (5,-3) -- (5,3.75) -- (-4.7,3.75) -- cycle
+  (-4.7,1)--(5,1);
+  \end{scope}
+
+  \MathMLBox{1}{-1.5}{.5}{1}{red}
+
+  \draw[dashed,orange](11,3.75)--(-2,3.75) node[left]{Bottom (0\%)};
+  \draw[dashed,orange](11,-1.5)--(-2,-1.5) node[left]{Radical Degree Bottom Raise Percent};
+  \draw[dashed,orange](11,-2.5)--(-2,-2.5) node[left]{Top (100\%)};
+
+  \draw[dashed,blue] (0,-3.5) -- (11,-3.5) -- (11,3.75) -- (0,3.75) -- cycle
+  (0,1)--(11,1);
+
+  \draw[->,black] (0,0) -- (.5,0) node[left,rotate=90] {Radical Kerning Before Degree} -- (1,0);
+  \draw[->,black] (3.5,.25) -- (3,.25) node[left,rotate=90] {Radical Kerning After Degree} -- (1.3,.25);
+\end{tikzpicture}
+\label{RootBoxModel}
 \end{figure}
