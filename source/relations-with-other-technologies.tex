@@ -4,7 +4,8 @@
 
 User agents must use a HTML5 \cite{HTML5} parser to build a DOM tree
 \cite{DOM1} from the source code of web pages. In particular, they must follow
-the rules describing when elements must be in the MathML namespace and must
+the rules describing when elements must be in the MathML namespace
+{\tt http://www.w3.org/1998/Math/MathML} and must
 recognize the entity definitions from the HTML MathML entity set of
 \cite{XMLEntities}. They must also take into account the following integration
 points between SVG, MathML and HTML as allowed by \cite{ValidatorSchemas}:
@@ -27,8 +28,9 @@ synchronization with the DOM tree.
 
 When evaluating the SVG {\tt requiredExtensions} attribute \cite{SVG11},
 user agents must claim support for the extension of name the MathML namespace
-{\tt http://www.w3.org/1998/Math/MathML}. An algorithm to decide the visible
-child of the {\tt <semantics>} element is proposed in ????????.
+string.
+An algorithm to decide the visible child of the {\tt <semantics>} element is
+proposed in ????????.
 
 \subsection{Text layout and Open Font Format}
 
@@ -89,6 +91,24 @@ In addition, this specification introduces new non-animatable CSS properties:
 \item {\tt mathml-script-min-size}
 \item {\tt mathml-math-variant}
 \item {\tt mathml-math-style}
+\end{enumerate}
+
+\subsubsection{Attributes mapped to CSS properties}\label{mappedAttributes}
+
+The following MathML attributes are mapped to CSS properties:
+
+\begin{enumerate}
+\item The {\tt mathcolor} and {\tt mathbackground} attributes on presentation
+  MathML elements are mapped to {\tt color} and {\tt background} respectively.
+\item The {\tt mathsize}, {\tt mathvariant} attributes on the {\tt math},
+  {\tt mstyle} and token elements are mapped to {\tt font-size} and
+  {\tt mathml-math-variant} respectively.
+\item The {\tt dir} attribute on the {\tt math}, {\tt mstyle}, {\tt mrow} and
+  {\tt token} elements are mapped to {\tt direction}.
+\item The {\tt scriptlevel}, {\tt scriptminsize} and {\tt scriptsizemultiplier}
+  attributes on the {\tt math} and {\tt mstyle} elements are mapped to
+  {\tt mathml-script-level}, {\tt mathml-script-size-multiplier}
+  and {\tt mathml-script-min-size} respectively.
 \end{enumerate}
 
 \subsubsection{Box Model}
@@ -228,6 +248,12 @@ ms[lquote]:before {
 }
 ms[rquote]:after {
   content: attr(rquote)
+}
+
+/*  The <merror> element */
+merror {
+ outline: solid thin red;
+ background-color: lightYellow;
 }
 
 /* The <mphantom> element */

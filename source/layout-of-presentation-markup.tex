@@ -1,6 +1,16 @@
-\section{Section ???}
+\section{Layout of Presentation Markup}
 
-\subsection{Fractions {\tt <mfrac>}}
+\subsection{Token Elements}
+
+...
+
+\subsection{General Layout Schemata}
+
+\subsubsection{Horizontally Group Sub-Expressions {\tt <mrow>}}
+
+...
+
+\subsubsection{Fractions {\tt <mfrac>}}
 
 The {\tt mfrac} element is used for fractions. It can also be used to mark up
 fraction-like objects such as binomial coefficients and Legendre symbols.
@@ -27,6 +37,8 @@ actual thickness of the fraction bar. A percent or unitless length is
 interpreted as a multiple of the default rule thickness and
 the named values "thin", "medium" and "thick" are interpreted as
 50\%, 100\%, 200\%.
+The color and visibility of the fraction bar must honor the values given by the
+{\tt color} and {\tt visibility} CSS properties.
 
 If the actual linethickness is nonzero, the {\tt mfrac} element is laid out as
 shown on \ref{FractionBoxModel}. The width is given by the maximum width of the
@@ -97,7 +109,6 @@ by {\tt StackGapMin} in inline style and
 \label{StackBoxModel}
 \end{figure}
 
-
 User agents may increase the width by adding a trailing/leading space
 of 1 pixel around the fraction. If the numerator is an embellished operator and
 the {\tt mfrac} element is the outermost element in this embellished operator
@@ -107,7 +118,7 @@ the fraction.
 User agents may extend the box model to support the {\tt numalign},
 {\tt denomalign} and {\tt bevelled} attributes \cite{MathML3}.
 
-\subsection{Radicals root {\tt <msqrt>}, {\tt <mroot>}}
+\subsubsection{Radicals {\tt <msqrt>}, {\tt <mroot>}}
 
 These elements construct radicals. The {\tt msqrt} element is used for square
 roots, while the {\tt mroot} element is used to draw radicals with indices,
@@ -143,6 +154,8 @@ to at least the sum of the ink height of the base, the radical gap and the
 radical rule thickness. If the CSS {\tt direction} is set to right-to-left,
 then the surd is actually drawn from the glyph obtained by mirroring
 U+221A SQUARE ROOT via the {\tt rtlm} OpenType feature.
+The color and visibility of the surd and overbar must honor the values given by
+the {\tt color} and {\tt visibility} CSS properties.
 
 The {\tt msqrt} element is laid out as shown on \ref{SquareRootBoxModel}.
 The width is given by the sum of the width of the surd and of the base.
@@ -181,23 +194,24 @@ logical box takes into account the extra ascender
 \label{SquareRootBoxModel}
 \end{figure}
 
-The {\tt msqrt} element is laid out as shown on \ref{RootBoxModel}.
-We start by ignoring the index and we layout the base and radical symbol as
+The {\tt mroot} element is laid out as shown on \ref{RootBoxModel}.
+We start by ignoring the root index and we layout the base and surd as
 shown on \ref{SquareRootBoxModel} to obtain a box $B$.
 The horizontal metrics of the {\tt mroot} element are obtained by putting
 {\tt RadicalKernBeforeDegree}
-before the index, then putting the index, then a kerning
+before the root index, then placing the root index, then a kerning
 of {\tt RadicalKernAfterDegree}
-after the index and finally placing $B$. In general
-the kerning before the index is positive while the kerning after is negative,
+after the root index and finally placing $B$ (r. In general
+the kerning before the root index is positive while the kerning after it is
+negative,
 which means that the root element will have some space before it and that the
-index will overlap the surd.
+root index will overlap the surd.
 For the vertical metrics of the {\tt mroot} element, we first take the baseline
 of $B$ as the baseline. Then if we graduate the ink height of $B$ with a linear
-scale going from 0 (bottom) to 1 (top) then the baseline of the index will be
-vertically positioned at coordinate {\tt RadicalDegreeBottomRaisePercent}.
-Finally, we take into consideration the index box and $B$ to deduce the metrics
-for the whole box of the {\tt mroot} element.
+scale going from 0 (bottom) to 1 (top) then the baseline of the root index will
+be vertically positioned at coordinate {\tt RadicalDegreeBottomRaisePercent}.
+Finally, we take into consideration the box of the root index and $B$ to deduce
+the metrics for the whole box of the {\tt mroot} element.
 
 \begin{figure}
 \centering
@@ -225,3 +239,106 @@ for the whole box of the {\tt mroot} element.
 \end{tikzpicture}
 \label{RootBoxModel}
 \end{figure}
+
+\subsubsection{Style Change {\tt <mstyle>}}
+
+The mstyle element is used to make style changes that affect the rendering of
+its contents.
+
+For the layout algorithm described in this specification, the
+{\tt mstyle} element musb be treated the same as the {\tt mrow} element.
+However, some attributes on the {\tt mstyle} element must be mapped to CSS
+properties as indicated in \ref{mappedAttributes}. All the other {\tt mstyle}
+attributes not defined in this specification must be ignored.
+
+\subsubsection{Error Message {\tt <merror>}}
+
+The {\tt merror} element displays its contents as an "error message".
+
+For the layout algorithm described in this specification, the
+{\tt merror} element musb be treated the same as the {\tt mrow} element.
+The user agent stylesheet must set some CSS properties on the {\tt merror}
+element in order to highlight the error. This can for example be achieved with
+the rule:
+
+\begin{lstlisting}
+merror {
+  outline: solid thin red;
+  background-color: lightYellow;
+}
+\end{lstlisting}
+
+\subsubsection{ Adjust Space Around Content {\tt <mpadded>}}
+
+An {\tt mpadded} element renders the same as its child content, but with the
+size of the child's bounding box and the relative positioning point of its
+content modified according to {\tt mpadded}'s attributes.
+
+See \cite{MathML3} for how the metrics of {\tt mpadded} element are determined.
+The height, depth and width of the content in \cite{MathML3} corresponds to
+the logical box of the content. The content of the {\tt mpadded} element is
+positioned from the origin of the {\tt mpadded} element by shifting it forward
+by a distance of {\tt lspace} and shifting it upward by a distance of
+{\tt voffset}. The logical metrics of the {\tt mpadded} element are given by the
+height, depth and width of the {\tt mpadded} element described in
+\cite{MathML3}. The ink metrics of the {\tt mpadded} element match their logical
+metrics.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[yscale=-1]
+\end{tikzpicture}
+\label{MpaddedBoxModel}
+\end{figure}
+
+\subsubsection{Making Sub-Expressions Invisible {\tt <mphantom>}}
+
+The mphantom element renders invisibly, but with the same size and other
+dimensions, including baseline position, that its contents would have if they
+were rendered normally.
+
+For the layout algorithm described in this specification, the
+{\tt mphantom} element musb be treated the same as the {\tt mrow} element.
+The user agent stylesheet must set some CSS properties on the {\tt mphantom}
+element in order to hide its content. This can for example be achieved with
+the rule:
+
+\begin{lstlisting}
+mphantom {
+  visibility: hidden;
+}
+\end{lstlisting}
+
+\subsubsection{Expression Inside Pair of Fences {\tt <mfenced>}}
+
+The {\tt mfenced} element provides a convenient form in which to express common
+constructs involving fences (i.e. braces, brackets, and parentheses),
+possibly including separators (such as comma) between the arguments.
+
+For the MathML layout algorithm described in this specification, the
+{\tt merror} element must be treated as equivalent to the {\tt mrow} element
+and the {\tt open}, {\tt close} and {\tt separators} attributes must be ignored.
+
+\subsection{Script and Limit Schemata}
+
+\subsubsection{Subscripts and Superscripts {\tt <msub>}, {\tt <msup>}, {\tt <msubsup>}}
+
+\subsubsection{Underscripts and Overscripts  {\tt <munder>}, {\tt <mover>}, {\tt <munderover>}}
+
+\subsubsection{Prescripts and Tensor Indices \tt <mmultiscripts>}
+
+\subsection{Tabular Math}
+
+...
+
+\subsection{Elementary Math}
+
+...
+
+\subsection{Enlivening Expressions}
+
+...
+
+\subsection{Semantics and Presentation}
+
+...
