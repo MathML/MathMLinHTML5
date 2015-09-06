@@ -1,4 +1,68 @@
-\section{Layout of Presentation Markup}
+\section{Presentation Markup}
+
+\subsection{Introduction}
+
+\subsubsection{Box Model}
+
+User agents must also follow the rules described in section 4.7.14
+Embedded content, MathML of \cite{HTML5}, in particular the equivalence with
+implicit {\tt mtext} and {\tt merror} to handle non-conforming MathML markup.
+
+MathML elements have the following box model. The {\tt <math>} root may have
+inline or block display while tabular MathML elements have table, table-row and
+table-cell display (see ????). The {\tt <math>} and {\tt <mtd>} elements
+generate an anonymous {\tt <mrow>} MathML box child that contains the boxes of
+their children and use the box parameters below to layout this anonymous
+{\tt <mrow>} box.
+No line breaking can happen within MathML boxes and the min-content width is
+equal to the max-content width, these are simply called the intrinsic width.
+Each MathML box has the following parameters:
+
+\begin{enumerate}
+\item intrinsic width $W$.
+\item logical width $w$, ascent above the origin $a$ and descent below the
+  origin $b$. The height is then $a+b$.
+\item ink ascent $A$ and descent $B$, corresponding to the exact box enclosing
+  ink of text and bars within the MathML box.
+\end{enumerate}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[yscale=-1]
+  \draw[->] (0,0) -- (15,0) node[below] {$x$};
+  \draw[->] (0,0) -- (0,6) node[right] {$y$};
+  \draw[dashed,blue] (0,-2) -- (13.5,-2) -- (13.5,4) -- (0,4) -- cycle;
+  \MathMLBox{0}{0}{1}{1}{red}
+  \MathMLBoxMetrics{0}{0}{1}{1}{red}{1}
+  \MathMLBox{6}{2}{1.5}{1}{green}
+  \MathMLBoxMetrics{6}{2}{1.5}{1}{green}{2}
+\end{tikzpicture}
+\label{MathMLBoxModel}
+\end{figure}
+
+For MathML element containing only text nodes or foreign elements, we assume
+that the content is simple enough to determine these values. For example,
+in most case, this is just a single text node and $w = W$.
+A MathML element containing only other MathML elements follow special rules to
+layout their children at position $(x_i,y_i)$ with parameters
+$W_i,w_i,a_i,b_i,A_i,B_i$. Then as a general rule, its box parameters are given
+by taking the union of child boxes, that is:
+%
+$$w = \left(\max_{1 \leq i \leq n } {x_i + w_i}\right) -
+      \left(\min_{1 \leq i \leq n} x_i\right)$$
+$$W = \left(\max_{1 \leq i \leq n } {x_i + W_i}\right) -
+      \left(\min_{1 \leq i \leq n} x_i\right)$$
+$$a = \max_{1 \leq i \leq n } {a_i - y_i}$$
+$$b = \max_{1 \leq i \leq n } {b_i + y_i}$$
+$$A = \max_{1 \leq i \leq n } {A_i - y_i}$$
+$$B = \max_{1 \leq i \leq n } {B_i + y_i}$$
+%
+
+Note that the schemas in this specification are drawn assuming left-to-right
+directionality. If the CSS {\tt direction} is set to right-to-left, then the
+elements should be layout by making the $x$-axis pointing from right-to-left.
+
+Detailed rules as well as possible additional spacing are given in ????
 
 \subsection{Token Elements}
 
@@ -29,7 +93,7 @@ denominator.
 \end{quote}
 
 The {\tt displaystyle} and {\tt scriptlevel} changes be achieved with the
-following style in the user agent stylesheet:
+following style in the user agent stylesheet (section \ref{UAStylesheet}):
 %
 \begin{lstlisting}
   mfrac > * {
@@ -48,7 +112,8 @@ The color and visibility of the fraction bar must honor the values given by the
 {\tt color} and {\tt visibility} CSS properties on the {\tt mfrac} element.
 
 If the actual line thickness is nonzero, the {\tt mfrac} element is laid out as
-shown on \ref{FractionBoxModel}. The width is given by the maximum width of the
+shown on figure \ref{FractionBoxModel}.
+The width is given by the maximum width of the
 numerator and denominator and the numerator and denominator are horizontally
 centered. A fraction bar with the actual thickness is drawn centered on the
 axis height. The numerator and denominator are shifted
@@ -88,7 +153,7 @@ by {\tt FractionDenominatorGapMin} and
 
 If the actual line thickness is zero,
 the {\tt mfrac} element is instead laid out as
-shown on \ref{StackBoxModel}. The gap between the top and bottom boxes
+shown on figure \ref{StackBoxModel}. The gap between the top and bottom boxes
 is equally split around the axis height. The relevant shift values are now
 {\tt StackTopShiftUp},
 {\tt StackBottomShiftDown} in inline style and
@@ -153,7 +218,7 @@ the left, along with the index in the case of mroot.
 \end{quote}
 
 The {\tt displaystyle} and {\tt scriptlevel} changes be achieved with the
-following style in the user agent stylesheet:
+following style in the user agent stylesheet (section \ref{UAStylesheet}):
 %
 \begin{lstlisting}
   mroot > :not(:first-child) {
@@ -174,7 +239,7 @@ U+221A SQUARE ROOT via the {\tt rtlm} OpenType feature.
 The color and visibility of the surd and overbar must honor the values given by
 the {\tt color} and {\tt visibility} CSS properties on the {\tt msqrt} element.
 
-The {\tt msqrt} element is laid out as shown on \ref{SquareRootBoxModel}.
+The {\tt msqrt} element is laid out as shown on figure \ref{SquareRootBoxModel}.
 The width is given by the sum of the width of the surd and of the base.
 The baseline of the square root matches the baseline of the base.
 The ink box is determined from the ink boxes of the surd and base while the
@@ -211,9 +276,9 @@ logical box takes into account the extra ascender
 \label{SquareRootBoxModel}
 \end{figure}
 
-The {\tt mroot} element is laid out as shown on \ref{RootBoxModel}.
+The {\tt mroot} element is laid out as shown on figure \ref{RootBoxModel}.
 We start by ignoring the root index and we layout the base and surd as
-shown on \ref{SquareRootBoxModel} to obtain a box $B$.
+shown on figure \ref{SquareRootBoxModel} to obtain a box $B$.
 The horizontal metrics of the {\tt mroot} element are obtained by putting
 {\tt RadicalKernBeforeDegree}
 before the root index, then placing the root index, then a kerning
@@ -245,14 +310,17 @@ the metrics for the whole box of the {\tt mroot} element.
   \MathMLBox{1}{-1.5}{.5}{1}{red}
 
   \draw[dashed,orange](11,3.75)--(-2,3.75) node[left]{Bottom (0\%)};
-  \draw[dashed,orange](11,-1.5)--(-2,-1.5) node[left]{Radical Degree Bottom Raise Percent};
+  \draw[dashed,orange](11,-1.5)--(-2,-1.5) node[left]
+       {Radical Degree Bottom Raise Percent};
   \draw[dashed,orange](11,-2.5)--(-2,-2.5) node[left]{Top (100\%)};
 
   \draw[dashed,blue] (0,-3.5) -- (11,-3.5) -- (11,3.75) -- (0,3.75) -- cycle
   (0,1)--(11,1);
 
-  \draw[->,black] (0,0) -- (.5,0) node[left,rotate=90] {Radical Kerning Before Degree} -- (1,0);
-  \draw[->,black] (3.5,.25) -- (3,.25) node[left,rotate=90] {Radical Kerning After Degree} -- (1.3,.25);
+  \draw[->,black] (0,0) -- (.5,0) node[left,rotate=90]
+       {Radical Kerning Before Degree} -- (1,0);
+  \draw[->,black] (3.5,.25) -- (3,.25) node[left,rotate=90]
+       {Radical Kerning After Degree} -- (1.3,.25);
 \end{tikzpicture}
 \label{RootBoxModel}
 \end{figure}
@@ -279,7 +347,8 @@ specified for an attribute.
 For the layout algorithm described in this specification, the
 {\tt mstyle} element must be treated the same as the {\tt mrow} element.
 However, some attributes on the {\tt mstyle} element must be mapped to CSS
-properties as indicated in \ref{mappedAttributes}. All the other {\tt mstyle}
+properties as indicated in section \ref{CSSProperties}.
+All the other {\tt mstyle}
 attributes not defined in this specification must be ignored.
 
 \subsubsection{Error Message {\tt <merror>}}
@@ -298,7 +367,8 @@ multiple children. [...]
 
 For the layout algorithm described in this specification, the
 {\tt merror} element must be treated the same as the {\tt mrow} element.
-The user agent stylesheet must set some CSS properties on the {\tt merror}
+The user agent stylesheet (section \ref{UAStylesheet})
+must set some CSS properties on the {\tt merror}
 element in order to highlight the error. This can for example be achieved with
 the rule:
 %
@@ -309,7 +379,7 @@ merror {
 }
 \end{lstlisting}
 
-\subsubsection{ Adjust Space Around Content {\tt <mpadded>}}
+\subsubsection{ Adjust Space Around Content {\tt <mpadded>}}\label{mpadded}
 
 The MathML specification describes {\tt mpadded} as follows \cite{MathML3}:
 %
@@ -356,7 +426,8 @@ The {\tt mphantom} element accepts a single argument possibly being an inferred
 
 For the layout algorithm described in this specification, the
 {\tt mphantom} element must be treated the same as the {\tt mrow} element.
-The user agent stylesheet must set some CSS properties on the {\tt mphantom}
+The user agent stylesheet (section \ref{UAStylesheet})
+must set some CSS properties on the {\tt mphantom}
 element in order to hide its content. This can for example be achieved with
 the rule:
 %
@@ -405,9 +476,11 @@ possibly being an inferred mrow of multiple children [...]
 
 \subsection{Script and Limit Schemata}
 
-\subsubsection{Subscripts and Superscripts {\tt <msub>}, {\tt <msup>}, {\tt <msubsup>}}
+\subsubsection{Subscripts and Superscripts {\tt <msub>}, {\tt <msup>},
+  {\tt <msubsup>}}
 
-\subsubsection{Underscripts and Overscripts  {\tt <munder>}, {\tt <mover>}, {\tt <munderover>}}
+\subsubsection{Underscripts and Overscripts  {\tt <munder>}, {\tt <mover>},
+  {\tt <munderover>}}
 
 \subsubsection{Prescripts and Tensor Indices \tt <mmultiscripts>}
 
@@ -486,7 +559,8 @@ second child in some way when the {\tt maction} element receives a {\tt hover}
 event. This specification does not define how these DOM events are propagated
 or how to change the default behavior.
 
-Given the similarity with the {\tt semantics} element \ref{semantics}, it is
+Given the similarity with the {\tt semantics} element
+(section \ref{semantics}), it is
 suggested to share the implementation of {\tt semantics} and {\tt maction}.
 
 \subsection{Semantics and Presentation}\label{semantics}
@@ -539,5 +613,6 @@ the user agent may treat the {\tt semantics} element as an
 empty {\tt mrow} element or as an {\tt merror} element with some error message
 indicating invalid markup.
 
-Given the similarity with the {\tt maction} element \ref{maction}, it is
+Given the similarity with the {\tt maction} element
+(section \ref{maction}), it is
 suggested to share the implementation of {\tt semantics} and {\tt maction}.
