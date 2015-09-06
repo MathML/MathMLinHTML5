@@ -54,3 +54,9 @@ header.ltx_page_header {
 footer.ltx_page_footer {
     border-top: none;
 }
+
+blockquote {
+    background: #efe;
+    border: 1px solid blue;
+    padding: .5em;
+}

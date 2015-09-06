@@ -12,25 +12,32 @@
 
 \subsubsection{Fractions {\tt <mfrac>}}
 
+The MathML specification describes {\tt mfrac} as follows \cite{MathML3}:
+%
+\begin{quote}
 The {\tt mfrac} element is used for fractions. It can also be used to mark up
 fraction-like objects such as binomial coefficients and Legendre symbols.
 The syntax for {\tt mfrac} is
-
+%
 \begin{lstlisting}
   <mfrac> numerator denominator </mfrac>
 \end{lstlisting}
-
+%
 The {\tt mfrac} element sets {\tt displaystyle} to "false", or if it was
-already false increments scriptlevel by 1, within numerator and denominator.
-This can be achieved with the following style in the user agent stylesheet:
+already false increments {\tt scriptlevel} by 1, within numerator and
+denominator.
+\end{quote}
 
+The {\tt displaystyle} and {\tt scriptlevel} changes be achieved with the
+following style in the user agent stylesheet:
+%
 \begin{lstlisting}
   mfrac > * {
     mathml-script-level: auto;
     mathml-math-style: inline;
   }
 \end{lstlisting}
-
+%
 The default line thickness is given by {\tt FractionRuleThickness}
 Use the {\tt linethickness} attribute \cite{MathML3} to determine the
 actual thickness of the fraction bar. A percent or unitless length is
@@ -38,9 +45,9 @@ interpreted as a multiple of the default rule thickness and
 the named values "thin", "medium" and "thick" are interpreted as
 50\%, 100\%, 200\%.
 The color and visibility of the fraction bar must honor the values given by the
-{\tt color} and {\tt visibility} CSS properties.
+{\tt color} and {\tt visibility} CSS properties on the {\tt mfrac} element.
 
-If the actual linethickness is nonzero, the {\tt mfrac} element is laid out as
+If the actual line thickness is nonzero, the {\tt mfrac} element is laid out as
 shown on \ref{FractionBoxModel}. The width is given by the maximum width of the
 numerator and denominator and the numerator and denominator are horizontally
 centered. A fraction bar with the actual thickness is drawn centered on the
@@ -79,14 +86,16 @@ by {\tt FractionDenominatorGapMin} and
 \label{FractionBoxModel}
 \end{figure}
 
-If the actual linethickness zero, the {\tt mfrac} element is instead laid out as
-shown on \ref{StackBoxModel}. The relevant shift values are now
+If the actual line thickness is zero,
+the {\tt mfrac} element is instead laid out as
+shown on \ref{StackBoxModel}. The gap between the top and bottom boxes
+is equally split around the axis height. The relevant shift values are now
 {\tt StackTopShiftUp},
 {\tt StackBottomShiftDown} in inline style and
 {\tt StackTopDisplayStyleShiftUp},
 {\tt StackBottomDisplayStyleShiftDown} in display style.
 If necessary, the two shift values are increased by a same value to ensure
-the gaps between the top and bottom boxes satisfy the values provided by
+the gap between the top and bottom boxes satisfy the values provided by
 by {\tt StackGapMin} in inline style and
 {\tt StackDisplayStyleGapMin} in display style.
 
@@ -109,35 +118,43 @@ by {\tt StackGapMin} in inline style and
 \label{StackBoxModel}
 \end{figure}
 
-User agents may increase the width by adding a trailing/leading space
-of 1 pixel around the fraction. If the numerator is an embellished operator and
-the {\tt mfrac} element is the outermost element in this embellished operator
-hierarchy then the operator leading and trailing spaces must be added around
-the fraction.
+If the numerator is an embellished operator and the {\tt mfrac} element is the
+outermost element in this embellished operator hierarchy then the operator
+leading and trailing spaces must be added around the fraction.
+(TODO: Gecko always adds 1px around the fraction)
 
 User agents may extend the box model to support the {\tt numalign},
 {\tt denomalign} and {\tt bevelled} attributes \cite{MathML3}.
 
 \subsubsection{Radicals {\tt <msqrt>}, {\tt <mroot>}}
 
+The MathML specification describes radicals as follows \cite{MathML3}:
+%
+\begin{quote}
 These elements construct radicals. The {\tt msqrt} element is used for square
 roots, while the {\tt mroot} element is used to draw radicals with indices,
 e.g. a cube root. The syntax for these elements is:
-
+%
 \begin{lstlisting}
   <msqrt> base </msqrt>
   <mroot> base index </mroot>
 \end{lstlisting}
-
+%
 The {\tt mroot} element requires exactly 2 arguments. However, {\tt msqrt}
 accepts a single argument, possibly being an inferred {\tt mrow} of multiple
 children.
 
 The {\tt mroot} element increments scriptlevel by 2, and sets displaystyle to
 "false", within index, but leaves both attributes unchanged within base. The
-{\tt msqrt} element leaves both attributes unchanged within its argument.
-This can be achieved with the following style in the user agent stylesheet:
+{\tt msqrt} element leaves both attributes unchanged within its argument. [...]
 
+Note that in a RTL directionality, the surd begins on the right, rather than
+the left, along with the index in the case of mroot.
+\end{quote}
+
+The {\tt displaystyle} and {\tt scriptlevel} changes be achieved with the
+following style in the user agent stylesheet:
+%
 \begin{lstlisting}
   mroot > :not(:first-child) {
     mathml-script-level: +2;
@@ -155,7 +172,7 @@ radical rule thickness. If the CSS {\tt direction} is set to right-to-left,
 then the surd is actually drawn from the glyph obtained by mirroring
 U+221A SQUARE ROOT via the {\tt rtlm} OpenType feature.
 The color and visibility of the surd and overbar must honor the values given by
-the {\tt color} and {\tt visibility} CSS properties.
+the {\tt color} and {\tt visibility} CSS properties on the {\tt msqrt} element.
 
 The {\tt msqrt} element is laid out as shown on \ref{SquareRootBoxModel}.
 The width is given by the sum of the width of the surd and of the base.
@@ -242,25 +259,49 @@ the metrics for the whole box of the {\tt mroot} element.
 
 \subsubsection{Style Change {\tt <mstyle>}}
 
-The mstyle element is used to make style changes that affect the rendering of
-its contents.
+The MathML specification has a long description of {\tt mstyle} with several
+ways to interpret the attributes, to handle inheritance and to deal with
+additional exceptions. The most important points are \cite{MathML3}:
+%
+\begin{quote}
+The {\tt mstyle} element is used to make style changes that affect the
+rendering of its contents. [...]
+
+The {\tt mstyle} element accepts a single argument, possibly being an inferred
+{\tt mrow} of multiple children [...]
+
+Loosely speaking, the effect of the {\tt mstyle} element is to change the
+default value of an attribute for the elements it contains. Style changes work
+in one of several ways, depending on the way in which default values are
+specified for an attribute.
+\end{quote}
 
 For the layout algorithm described in this specification, the
-{\tt mstyle} element musb be treated the same as the {\tt mrow} element.
+{\tt mstyle} element must be treated the same as the {\tt mrow} element.
 However, some attributes on the {\tt mstyle} element must be mapped to CSS
 properties as indicated in \ref{mappedAttributes}. All the other {\tt mstyle}
 attributes not defined in this specification must be ignored.
 
 \subsubsection{Error Message {\tt <merror>}}
 
-The {\tt merror} element displays its contents as an "error message".
+The MathML specification describes {\tt merror} as follows \cite{MathML3}:
+%
+\begin{quote}
+The {\tt merror} element displays its contents as an "error message". This
+might be done, for example, by displaying the contents in red, flashing the
+contents, or changing the background color. The contents can be any expression
+or expression sequence.
+
+{\tt merror} accepts a single argument possibly being an inferred {\tt mrow} of
+multiple children. [...]
+\end{quote}
 
 For the layout algorithm described in this specification, the
-{\tt merror} element musb be treated the same as the {\tt mrow} element.
+{\tt merror} element must be treated the same as the {\tt mrow} element.
 The user agent stylesheet must set some CSS properties on the {\tt merror}
 element in order to highlight the error. This can for example be achieved with
 the rule:
-
+%
 \begin{lstlisting}
 merror {
   outline: solid thin red;
@@ -270,15 +311,22 @@ merror {
 
 \subsubsection{ Adjust Space Around Content {\tt <mpadded>}}
 
+The MathML specification describes {\tt mpadded} as follows \cite{MathML3}:
+%
+\begin{quote}
 An {\tt mpadded} element renders the same as its child content, but with the
 size of the child's bounding box and the relative positioning point of its
-content modified according to {\tt mpadded}'s attributes.
+content modified according to {\tt mpadded}'s attributes. [...]
+
+The {\tt mpadded} element accepts a single argument which may be an inferred
+{\tt mrow} of multiple children
+\end{quote}
 
 See \cite{MathML3} for how the metrics of {\tt mpadded} element are determined.
 The height, depth and width of the content in \cite{MathML3} corresponds to
 the logical box of the content. The content of the {\tt mpadded} element is
-positioned from the origin of the {\tt mpadded} element by shifting it forward
-by a distance of {\tt lspace} and shifting it upward by a distance of
+positioned from the origin of the {\tt mpadded} element as follows: We shif it
+forward by a distance of {\tt lspace} and shift it upward by a distance of
 {\tt voffset}. The logical metrics of the {\tt mpadded} element are given by the
 height, depth and width of the {\tt mpadded} element described in
 \cite{MathML3}. The ink metrics of the {\tt mpadded} element match their logical
@@ -291,18 +339,27 @@ metrics.
 \label{MpaddedBoxModel}
 \end{figure}
 
+...
+
 \subsubsection{Making Sub-Expressions Invisible {\tt <mphantom>}}
 
-The mphantom element renders invisibly, but with the same size and other
+The MathML specification describes {\tt mphantom} as follows \cite{MathML3}:
+%
+\begin{quote}
+The {\tt mphantom} element renders invisibly, but with the same size and other
 dimensions, including baseline position, that its contents would have if they
-were rendered normally.
+were rendered normally. [...]
+
+The {\tt mphantom} element accepts a single argument possibly being an inferred
+{\tt mrow} of multiple children [...]
+\end{quote}
 
 For the layout algorithm described in this specification, the
-{\tt mphantom} element musb be treated the same as the {\tt mrow} element.
+{\tt mphantom} element must be treated the same as the {\tt mrow} element.
 The user agent stylesheet must set some CSS properties on the {\tt mphantom}
 element in order to hide its content. This can for example be achieved with
 the rule:
-
+%
 \begin{lstlisting}
 mphantom {
   visibility: hidden;
@@ -311,13 +368,40 @@ mphantom {
 
 \subsubsection{Expression Inside Pair of Fences {\tt <mfenced>}}
 
+The MathML specification has a long description of {\tt mfenced} with several
+exceptions for the parsing of its attributes. It gives a strict equivalence
+between {\tt mfenced} and constructions that rely exclusively on {\tt mo} and
+{\tt mrow} elements Here is the main point \cite{MathML3}:
+%
+\begin{quote}
 The {\tt mfenced} element provides a convenient form in which to express common
 constructs involving fences (i.e. braces, brackets, and parentheses),
 possibly including separators (such as comma) between the arguments.
+[...]
+\end{quote}
 
-For the MathML layout algorithm described in this specification, the
-{\tt merror} element must be treated as equivalent to the {\tt mrow} element
-and the {\tt open}, {\tt close} and {\tt separators} attributes must be ignored.
+This specification does define any layout algorithm for the {\tt mfenced}
+element. User agents may just treat them as equivalent to the {\tt mrow} element
+or to an {\tt merror} element with a relevant error message indicating
+unsupported markup.
+Alternatively, {\tt mfenced} may be implemented using a shadow tree, anonymous
+boxes, or any other methods that produce the same rendering as the equivalent
+constructions with {\tt mo} and {\tt mrow} elements.
+
+Authors are encouraged to use the equivalent constructions with {\tt mo} and
+{\tt mrow} elements, instead of relying on the {\tt mfenced} element.
+
+\subsubsection{Enclose Expression Inside Notation {\tt <menclose>}}
+
+The MathML specification describes {\tt menclose} as follows \cite{MathML3}:
+%
+\begin{quote}
+The {\tt menclose} element renders its content inside the enclosing notation
+specified by its notation attribute. {\tt menclose} accepts a single argument
+possibly being an inferred mrow of multiple children [...]
+\end{quote}
+
+...
 
 \subsection{Script and Limit Schemata}
 
@@ -333,12 +417,127 @@ and the {\tt open}, {\tt close} and {\tt separators} attributes must be ignored.
 
 \subsection{Elementary Math}
 
-...
+Elementary Math was introduced in version 3 of the MathML specification
+\cite{MathML3}:
 
-\subsection{Enlivening Expressions}
+\begin{quote}
+Mathematics used in the lower grades such as two-dimensional addition,
+multiplication, and long division tends to be tabular in nature. However, the
+specific notations used varies among countries much more than for higher level
+math. Furthermore, elementary math often presents examples in some intermediate
+state and MathML must be able to capture these intermediate or intentionally
+missing partial forms. Indeed, these constructs represent memory aids or
+procedural guides, as much as they represent ‘mathematics’.
 
-...
+The elements used for basic alignments in elementary math are:
 
-\subsection{Semantics and Presentation}
+{\tt mstack}: align rows of digits and operators
+{\tt msgroup}: groups rows with similar alignment
+{\tt msrow}: groups digits and operators into a row
+{\tt msline}: draws lines between rows of the stack
+{\tt mscarries}: annotates the following row with optional borrows/carries
+and/or crossouts
+{\tt mscarry}: a borrow/carry and/or crossout for a single digit
+{\tt mlongdiv}: specifies a divisor and a quotient for long division, along
+with a stack of the intermediate computations
+{\tt mfenced}
+[...]
+\end{quote}
 
-...
+This specification does not define any layout algorithm for the {\tt mstack},
+{\tt msgroup}, {\tt msrow}, {\tt msline}, {\tt mscarries}, {\tt mscarry} and
+{\tt mlongdiv} elements.
+
+\subsection{Enlivening Expressions}\label{maction}
+
+The MathML specification describes {\tt maction} as follows \cite{MathML3}:
+%
+\begin{quote}
+To provide a mechanism for binding actions to expressions, MathML provides the
+maction element. This element accepts any number of sub-expressions as
+arguments and the type of action that should happen is controlled by the
+actiontype attribute. Only three actions are predefined by MathML, but the list
+of possible actions is open.
+\end{quote}
+%
+User agents must display at most one of the child of a {\tt maction} element.
+User agents must determine the visible child as follows:
+\begin{enumerate}
+\item If {\tt actiontype} is {\tt toggle} and the {\tt selection} attribute
+  (with default value 1) points to a valid child index
+  between 1 and the number of children, then use the specified child.
+\item If the {\tt actiontype} is {\tt statusline} or {\tt tooltip} then
+  use the first child (if any).
+\item Otherwise, the visible child is undetermined.
+\end{enumerate}
+
+For the layout algorithm described in this specification, the
+{\tt maction} element must be treated the same as the {\tt mrow} element
+containing its visible child. If it is undetermined,
+the user agent may treat the {\tt maction} element as an
+empty {\tt mrow} element or as an {\tt merror} element with some relevant error
+message indicating invalid or unsupported markup.
+
+User agents may additionally provide a complete implementation of the
+{\tt toggle} actiontype updating the value of the {\tt selection} attribute
+after the {\tt maction} element receives a {\tt click} event.
+For {\tt statusline} and {\tt tooltip} attributes, they may also display the
+second child in some way when the {\tt maction} element receives a {\tt hover}
+event. This specification does not define how these DOM events are propagated
+or how to change the default behavior.
+
+Given the similarity with the {\tt semantics} element \ref{semantics}, it is
+suggested to share the implementation of {\tt semantics} and {\tt maction}.
+
+\subsection{Semantics and Presentation}\label{semantics}
+
+The MathML specification describes {\tt semantics} as follows \cite{MathML3}:
+%
+\begin{quote}
+The {\tt semantics} element is the container element that associates
+annotations with a MathML expression. The semantics element has as its first
+child the expression to be annotated. Any MathML expression may appear as the
+first child of the semantics element. Subsequent annotation and annotation-xml
+children enclose the annotations. An annotation represented in XML is enclosed
+in an {\tt annotation-xml} element. An annotation represented in character data
+is enclosed in an {\tt annotation} element.
+[...]
+\end{quote}
+
+User agents must display at most one of the child of a {\tt semantics} element.
+For example, they may always display the first child (if any) or may use this
+more advanced algorithm to determine a visible child:
+\begin{enumerate}
+\item If the {\tt semantics} element has a first child that is any of the
+  MathML elements (other than {\tt annotation} and {\tt annotation-xml})
+  whose rendering is described in this specification then use it as the visible
+  child and stop.
+\item Otherwise, check the children of the {\tt semantics} element in the DOM
+  order to try and find the first child that is
+  \begin{enumerate}
+  \item Either an {\tt annotation} without any {\tt src} attribute.
+  \item Or an {\tt annotation-xml} without any {\tt src} attribute and
+    with an {\tt encoding} attribute that has value
+    {\tt "application/mathml-presentation+xml"},
+    {\tt "MathML-Presentation"},
+    {\tt "image/svg+xml"},
+    {\tt "SVG1.1"},
+    {\tt "application/xhtml+xml"} or
+    {\tt "text/html"}.
+  \end{enumerate}
+\item Otherwise, fallback to the first child (if any).
+\item Otherwise, the {\tt semantics} element is empty and the visible child is
+  undetermined.
+\end{enumerate}
+
+For the layout algorithm described in this specification, the
+{\tt annotation-xml} element must be treated the same as the {\tt mrow} element,
+the {\tt annotation} element must be treated the same as the {\tt mtext}
+element. The {\tt semantics} element must be treated the same as an
+{\tt mrow} element containing only its visible child. If it is undetermined,
+the user agent may treat the {\tt semantics} element as an
+empty {\tt mrow} element or as an {\tt merror} element with some error message
+indicating invalid markup.
+
+Given the similarity with the {\tt maction} element \ref{maction}, it is
+suggested to share the implementation of {\tt semantics} and {\tt maction}.
