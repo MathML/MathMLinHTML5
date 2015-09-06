@@ -29,6 +29,7 @@ Each MathML box has the following parameters:
 \begin{figure}
 \centering
 \begin{tikzpicture}[yscale=-1]
+  \fill[blue!10] (0,-1.5) -- (13.5,-1.5) -- (13.5,3.5) -- (0,3.5) -- cycle;
   \draw[->] (0,0) -- (15,0) node[below] {$x$};
   \draw[->] (0,0) -- (0,6) node[right] {$y$};
   \draw[dashed,blue] (0,-2) -- (13.5,-2) -- (13.5,4) -- (0,4) -- cycle;
@@ -131,6 +132,7 @@ by {\tt FractionDenominatorGapMin} and
 \begin{figure}
 \centering
 \begin{tikzpicture}[yscale=-1]
+  \fill[blue!10] (0,-6.5) -- (12.5,-6.5) -- (12.5,2.5) -- (0,2.5) -- cycle;
   \MathMLBox{0}{-5}{2.5}{1}{red}
   \MathMLBox{3.75}{1}{1}{1}{green}
   \draw[dashed,blue] (0,-7) -- (12.5,-7) -- (12.5,3) -- (0,3) -- cycle
@@ -167,6 +169,7 @@ by {\tt StackGapMin} in inline style and
 \begin{figure}
 \centering
 \begin{tikzpicture}[yscale=-1]
+  \fill[blue!10] (0,-6.5) -- (12.5,-6.5) -- (12.5,2.5) -- (0,2.5) -- cycle;
   \MathMLBox{0}{-5}{2.5}{1}{red}
   \MathMLBox{3.75}{1}{1}{1}{green}
   \draw[dashed,blue] (0,-7) -- (12.5,-7) -- (12.5,3) -- (0,3) -- cycle
@@ -249,6 +252,8 @@ logical box takes into account the extra ascender
 \begin{figure}
 \centering
 \begin{tikzpicture}[yscale=-1]
+  \fill[blue!10] (-4.7,-2.5) -- (12.5,-2.5) --
+  (12.5,3.75) -- (-4.7,3.75) -- cycle;
 
   \fill[black!20] (0,-2.5) -- (12.5,-2.5) -- (12.5,-1.5) -- (0,-1.5) -- cycle;
 
@@ -283,7 +288,7 @@ The horizontal metrics of the {\tt mroot} element are obtained by putting
 {\tt RadicalKernBeforeDegree}
 before the root index, then placing the root index, then a kerning
 of {\tt RadicalKernAfterDegree}
-after the root index and finally placing $B$ (r. In general
+after the root index and finally placing $B$. In general
 the kerning before the root index is positive while the kerning after it is
 negative,
 which means that the root element will have some space before it and that the
@@ -298,11 +303,14 @@ the metrics for the whole box of the {\tt mroot} element.
 \begin{figure}
 \centering
 \begin{tikzpicture}[yscale=-1]
+  \fill[blue!10] (0,-3) -- (11,-3) -- (11,3.75) -- (0,3.75) -- cycle;
+
   \begin{scope}[shift={(6,0)}]
   \fill[green!20]
   (5,-2.5) -- (-2,-2.5) -- (-2,2) --
   (-4,-1) -- (-4.7,-.3) -- (-2.7,2.7) -- (-2,3.75) -- (-1,3.75) --
-  (-1,-1.5) -- (5,-1.5) -- (5,-2.5);
+  (-1,-1.75) -- (5,-1.75) -- (5,-2.5)
+  (-.5,0) -- (5,0) -- (5,3) -- (-.5,3) -- cycle;
   \draw[green] (-4.7,-3) -- (5,-3) -- (5,3.75) -- (-4.7,3.75) -- cycle
   (-4.7,1)--(5,1);
   \end{scope}
@@ -393,9 +401,17 @@ The {\tt mpadded} element accepts a single argument which may be an inferred
 \end{quote}
 
 See \cite{MathML3} for how the metrics of {\tt mpadded} element are determined.
+Note that pseudo-units allows horizontal metrics to depend on vertical metrics,
+for example \tt{ width="2height"} which can be problematic to determine
+intrinsic widths. Hence in the present specification, if
+the value of the {\tt width} and {\tt lspace} attributes contains
+"height" or "depth" pseudo-units, then they must be ignored.
+
+The {\tt mpadded} element is laid out as shown on figure \ref{MpaddedBoxModel}.
 The height, depth and width of the content in \cite{MathML3} corresponds to
 the logical box of the content. The content of the {\tt mpadded} element is
-positioned from the origin of the {\tt mpadded} element as follows: We shif it
+positioned from the origin of the {\tt mpadded} element as follows: We shift
+the content
 forward by a distance of {\tt lspace} and shift it upward by a distance of
 {\tt voffset}. The logical metrics of the {\tt mpadded} element are given by the
 height, depth and width of the {\tt mpadded} element described in
@@ -405,11 +421,32 @@ metrics.
 \begin{figure}
 \centering
 \begin{tikzpicture}[yscale=-1]
+  \fill[blue!10] (0,-6) -- (12,-6) -- (12,2) -- (0,2) -- cycle;
+  \draw[dashed,blue] (0,-6) -- (12,-6) -- (12,2) -- (0,2) -- cycle
+  (0,0)--(12,0);
+
+  \begin{scope}[shift={(2,-3)}]
+    \MathMLBox{0}{0}{1}{1}{red}
+    \draw[<->] (0,-.5) -- (2,-.5) node[below]{Content Width} -- (5,-.5);
+    \draw[<-] (5.25, -2) --
+    (5.25,-1) node[right]{Content Height} -- (5.25,0);
+    \draw[<-] (5.5, 2) --
+    (5.5,1) node[right]{Content Depth} -- (5.5,0);
+  \end{scope}
+
+  \draw[<->] (0,1) -- (6,1) node[below]{Width} -- (12,1);
+
+  \draw[<-] (12.25, -6) --
+  (12.25,-3) node[right]{Height} -- (12.25,0);
+  \draw[<-] (12.5, 2) --
+  (12.5,1) node[right]{Depth} -- (12.5,0);
+
+  \draw[->] (0, 0) -- (1,0) node[below]{Lspace} -- (2,0);
+
+  \draw[->] (2, 0) -- (2,-2) node[left]{Voffset} -- (2,-3);
 \end{tikzpicture}
 \label{MpaddedBoxModel}
 \end{figure}
-
-...
 
 \subsubsection{Making Sub-Expressions Invisible {\tt <mphantom>}}
 
