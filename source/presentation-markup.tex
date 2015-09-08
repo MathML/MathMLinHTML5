@@ -9,8 +9,10 @@ Embedded content, MathML of \cite{HTML5}, in particular the equivalence with
 implicit {\tt mtext} and {\tt merror} to handle non-conforming MathML markup.
 
 MathML elements have the following box model. The {\tt <math>} root may have
-inline or block display while tabular MathML elements have table, table-row and
-table-cell display (see ????). The {\tt <math>} and {\tt <mtd>} elements
+inline or block display, as suggested in section \ref{UAStylesheet}.
+Tabular MathML elements have table, table-row and
+table-cell display as discussed in section \ref{TabularMath}.
+The {\tt <math>} and {\tt <mtd>} elements
 generate an anonymous {\tt <mrow>} MathML box child that contains the boxes of
 their children and use the box parameters below to layout this anonymous
 {\tt <mrow>} box.
@@ -62,8 +64,6 @@ $$B = \max_{1 \leq i \leq n } {B_i + y_i}$$
 Note that the schemas in this specification are drawn assuming left-to-right
 directionality. If the CSS {\tt direction} is set to right-to-left, then the
 elements should be layout by making the $x$-axis pointing from right-to-left.
-
-Detailed rules as well as possible additional spacing are given in ????
 
 \subsection{Token Elements}
 
@@ -189,7 +189,8 @@ by {\tt StackGapMin} in inline style and
 If the numerator is an embellished operator and the {\tt mfrac} element is the
 outermost element in this embellished operator hierarchy then the operator
 leading and trailing spaces must be added around the fraction.
-(TODO: Gecko always adds 1px around the fraction)
+
+Gecko always adds 1px around the fraction \lxAddClass{issue}
 
 User agents may extend the box model to support the {\tt numalign},
 {\tt denomalign} and {\tt bevelled} attributes \cite{MathML3}.
@@ -247,7 +248,8 @@ The width is given by the sum of the width of the surd and of the base.
 The baseline of the square root matches the baseline of the base.
 The ink box is determined from the ink boxes of the surd and base while the
 logical box takes into account the extra ascender
-(add an extra descender ?????).
+
+Gecko adds an extra descender below the square root. \lxAddClass{issue}
 
 \begin{figure}
 \centering
@@ -771,7 +773,7 @@ compute each notation individually and take the union of the metrics:
 
 \subsubsection{Prescripts and Tensor Indices \tt <mmultiscripts>}
 
-\subsection{Tabular Math}
+\subsection{Tabular Math}\label{TabularMath}
 
 ...
 

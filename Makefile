@@ -1,7 +1,6 @@
 #!gmake
 
-# Programs used to build the pdf and HTML5 output.
-LATEX=xelatex
+# Programs used to build HTML5 output.
 LATEXMLC=latexmlc
 UNZIP=unzip
 WGET=wget
@@ -10,19 +9,14 @@ WGET=wget
 W3C_REC_CSS=http://www.w3.org/StyleSheets/TR/W3C-REC.css
 MATHML_FONTS=https://github.com/fred-wang/MathFonts/archive/gh-pages.zip
 
-all: pdf html
+all: html
 
 clean:
 	rm -f *~; rm -f */*~; rm -f */*/*~
-	cd output; rm -f *.aux *.log *.toc *.out
+	cd output
 
 distclean: clean
 	rm -rf output
-
-pdf:
-	mkdir -p output
-	cd source && \
-	$(LATEX) -output-directory ../output/ index.tex
 
 output/W3C-REC.css:
 	mkdir -p output
@@ -51,4 +45,4 @@ html: output/W3C-REC.css output/style.css output/webfonts/GUST-FONT-LICENSE.txt
                     --format=html5 --pmml --mathtex \
                     --css=style.css --splitat=section index.tex
 
-.PHONY: clean distclean pdf html
+.PHONY: clean distclean html
