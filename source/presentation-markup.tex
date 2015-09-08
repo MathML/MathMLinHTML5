@@ -194,7 +194,7 @@ leading and trailing spaces must be added around the fraction.
 User agents may extend the box model to support the {\tt numalign},
 {\tt denomalign} and {\tt bevelled} attributes \cite{MathML3}.
 
-\subsubsection{Radicals {\tt <msqrt>}, {\tt <mroot>}}
+\subsubsection{Radicals {\tt <msqrt>}, {\tt <mroot>}}\label{radicals}
 
 The MathML specification describes radicals as follows \cite{MathML3}:
 %
@@ -402,7 +402,7 @@ The {\tt mpadded} element accepts a single argument which may be an inferred
 
 See \cite{MathML3} for how the metrics of {\tt mpadded} element are determined.
 Note that pseudo-units allows horizontal metrics to depend on vertical metrics,
-for example \tt{ width="2height"} which can be problematic to determine
+for example {\tt width="2height"} which can be problematic to determine
 intrinsic widths. Hence in the present specification, if
 the value of the {\tt width} and {\tt lspace} attributes contains
 "height" or "depth" pseudo-units, then they must be ignored.
@@ -506,10 +506,260 @@ The MathML specification describes {\tt menclose} as follows \cite{MathML3}:
 \begin{quote}
 The {\tt menclose} element renders its content inside the enclosing notation
 specified by its notation attribute. {\tt menclose} accepts a single argument
-possibly being an inferred mrow of multiple children [...]
+possibly being an inferred {\tt mrow} of multiple children [...]
 \end{quote}
 
-...
+The color and visibility of the {\tt menclose} notations must honor the values
+given by the {\tt color} and {\tt visibility} CSS properties on the
+{\tt menclose} element.
+
+Based on \cite{OpenFontFormat3} \cite{TeXBook}, we use the notation $\xi_8$
+from the TeXBook to denote the default rule thickness and use $3\xi_8$ for gaps.
+We actually let $\xi_8$ be {\tt OverbarRuleThickness}.
+Contrary to what is done in general, the $x$-axis direction of all notations
+except {\tt radical} are independent of the CSS {\tt direction}.
+In order to determine the metrics of the {\tt menclose} notation, we
+compute each notation individually and take the union of the metrics:
+
+\begin{enumerate}
+\item The {\tt left} notation is drawn by putting a vertical bar of thickness
+  $\xi_8$ on the left of the content of the {\tt menclose} element.
+  The length of the bar is obtained by extending the height of the content
+  with {\tt OverbarVerticalGap} plus {\tt OverbarRuleThickness} above
+  and  {\tt UnderbarVerticalGap} plus {\tt UnderbarRuleThickness} below.
+  The gap between the bar and the content is $3\xi_8$.
+  The logical box is obtained by adding some space of width
+  $\xi_8$ on the left of the bar. See figure \ref{MencloseLeftBoxModel}.
+
+  \begin{figure}
+\centering
+\begin{tikzpicture}[yscale=-1]
+
+  \fill[blue!10] (0,-3.5) -- (10,-3.5) --
+  (10,3.5) -- (0,3.5) -- cycle;
+  \MathMLBox{2}{0}{1.5}{1}{red}
+
+  \fill[black!20] (0,-3.5) -- (.5,-3.5) -- (.5,3.5) -- (0,3.5) -- cycle;
+
+  \draw[dashed,blue](-.5,-3.5) -- (9.5,-3.5) -- (9.5,3.5) --
+  (-.5,3.5) -- cycle (0,0) -- (9.5,0);
+
+  \draw[<->] (2,-3) -- (2,-2.5) node[right]{Overbar Vertical Gap} -- (2,-1.5);
+  \draw[<->] (2,-3) -- (2,-3.25)
+    node[right]{Overbar Rule Thickness} -- (2,-3.5);
+
+  \draw[<->] (.5,0) -- (1.25,0)node[below]{$3\xi_8$} -- (2,0);
+  \draw[<->] (.5,0) -- (.25,0)node[below]{$\xi_8$} -- (0,0);
+  \draw[<->] (-.5,0) -- (-.25,0)node[below]{$\xi_8$} -- (0,0);
+
+  \draw[<->] (2,3) -- (2,2.5) node[right]{Underbar Vertical Gap} -- (2,1.5);
+  \draw[<->] (2,3) -- (2,3.25)
+    node[right]{Underbar Rule Thickness} -- (2,3.5);
+\end{tikzpicture}
+\label{MencloseLeftBoxModel}
+\end{figure}
+
+\item The {\tt right} notation is drawn the same as the {\tt left} notation,
+  but with the vertical bar placed on the right.
+
+\item The {\tt top} notation is drawn by putting an overbar of thickness
+  {\tt OverbarRuleThickness} over the content of the {\tt menclose} element.
+  The length of the bar is obtained by extending the width of the content
+  with $4\xi_8$ on each side.
+  The gap between the overbar and the content is {\tt OverbarVerticalGap}.
+  The logical box is obtained by adding some space of height
+  {\tt OverbarExtraAscender} above the bar.
+  See figure \ref{MencloseTopBoxModel}.
+
+  \begin{figure}
+\centering
+\begin{tikzpicture}[yscale=-1]
+
+  \fill[blue!10] (0,-3.5) -- (11.5,-3.5) -- (11.5,2) -- (0,2) -- cycle;
+  \MathMLBox{2}{0}{1.5}{1}{red}
+  \fill[black!20] (0,-3.5) -- (11.5,-3.5) -- (11.5,-3) -- (0,-3) -- cycle;
+
+  \draw[dashed,blue](0,-4) -- (11.5,-4) -- (11.5,2) -- (0,2) -- cycle
+  (0,0) -- (11.5,0);
+
+  \draw[<->] (2,-3) -- (2,-2.5) node[right]{Overbar Vertical Gap} -- (2,-1.5);
+  \draw[<->] (2,-3) -- (2,-3.25)
+    node[right]{Overbar Rule Thickness} -- (2,-3.5);
+  \draw[<->] (2,-4) -- (2,-3.75)
+    node[right]{Overbar Extra Ascender} -- (2,-3.5);
+
+  \draw[<->] (0,0) -- (1,0)node[below]{$4\xi_8$} -- (2,0);
+  \draw[<->] (9.5,0) -- (10.5,0)node[below]{$4\xi_8$} -- (11.5,0);
+\end{tikzpicture}
+\label{MencloseTopBoxModel}
+\end{figure}
+
+\item The {\tt bottom} notation is drawn the same as the {\tt top} notation,
+  but with the vertical bar placed below the content and using parameters
+  {\tt UnderbarRuleThickness}, {\tt UnderbarVerticalGap}.
+  and {\tt UnderExtraDescender}.
+
+\item The {\tt box} notation is treated as equivalent to
+  {\tt left right top bottom}.
+
+\item To draw the {\tt roundedbox} notation, we consider the box
+  obtained by expanding the ink box by $\frac{7\xi_8}{2}$ on each side.
+  Using SVG terminology, we draw a rounded rectangle on this expanded box
+  with parameters {\tt rx}, {\tt ry} and {\tt stroke-width} set to $\xi_8$
+  \cite{SVG11}. To obtain the logical box we again add a space of $\xi_8$ on
+  each side of the ink box. See figure \ref{MencloseRoundedBoxBoxModel}.
+
+  \begin{figure}
+\centering
+  \begin{tikzpicture}[yscale=-1]
+
+  \fill[blue!10]
+  (-2,-3.5) -- (9.5,-3.5) -- (9.5,3.5) -- (-2,3.5) -- cycle;
+
+  \MathMLBox{0}{0}{1.5}{1}{red};
+
+  \draw[black!20,line width=12,rounded corners=12]
+  (-1.75,-3.25) -- (9.25,-3.25) -- (9.25,3.25) -- (-1.75,3.25) -- cycle;
+
+  \draw[dashed,blue]
+  (-2.5,-4) -- (10,-4) -- (10,4) -- (-2.5,4) -- cycle
+  (0,0) -- (10,0);
+
+  \draw[<->] (0,0) -- (-.75,0)node[below]{$3\xi_8$} -- (-1.5,0);
+  \draw[<->] (-1.5,0) -- (-1.75,0)node[below]{$\xi_8$} -- (-2,0);
+  \draw[<->] (-2,0) -- (-2.25,0)node[below]{$\xi_8$} -- (-2.5,0);
+
+  \draw[<->] (4,1.5) -- (4,2.25)node[left]{$3\xi_8$} -- (4,3);
+  \draw[<->] (4,3.5) -- (4,3.25)node[left]{$3\xi_8$} -- (4,3);
+  \draw[<->] (4,3.5) -- (4,3.75)node[left]{$\xi_8$} -- (4,4);
+
+\end{tikzpicture}
+\label{MencloseRoundedBoxBoxModel}
+\end{figure}
+
+\item The {\tt actuarial} notation is treated as equivalent to {\tt right top}.
+
+\item  The {\tt madruwb} notation is treated as equivalent to
+  {\tt right bottom}.
+
+\item The {\tt horizontalstrike} notation is drawn with an horizontal bar
+  of thickness $\xi_8$ and
+  vertically centered inside the {\tt menclose} content.
+  This does not change the box metrics.
+  See figure \ref{MencloseHorizontalStrikeBoxModel}.
+
+  \begin{figure}
+\centering
+\begin{tikzpicture}[yscale=-1]
+
+  \fill[blue!10] (0,-1.5) -- (7.5,-1.5) -- (7.5,1.5) -- (0,1.5) -- cycle;
+
+  \MathMLBox{0}{0}{1.5}{1}{red};
+
+  \fill[black!20] (0,-.25) -- (7.5,-.25) -- (7.5,.25) -- (0,.25) -- cycle;
+
+  \draw[dashed,blue](0,-2) -- (7.5,-2) -- (7.5,2) -- (0,2) -- cycle
+  (0,0) -- (7.5,0);
+
+  \draw[<->] (1,-.25) -- (1,0) node[right]{$\xi_8$} -- (1,.25);
+\end{tikzpicture}
+\label{MencloseHorizontalStrikeBoxModel}
+\end{figure}
+
+\item The {\tt verticalstrike} notation is drawn the same as
+  {\tt verticalstrike} but with a vertical bar
+  of thickness $\xi_8$ and horizontally centered inside the {\tt menclose}
+  content.
+\item The {\tt updiagonalstrike} notation is drawn with a line
+  of thickness $\xi_8$  going from the bottom left corner of the {\tt menclose}
+  content to its top right corner. Using SVG terminology, the
+  {\tt stroke-linecap} of the line is {\tt butt} \cite{SVG11}.
+  As an approximation, the ink box
+  is set equal to the logical box and obtained by increasing the original box
+  from each side by $\frac{\xi_8}{2}$.
+  See figure \ref{MencloseUpDiagonalStrikeBoxModel}.
+
+  \begin{figure}
+\centering
+\begin{tikzpicture}[yscale=-1]
+  \fill[blue!10]
+     (-.25,-2.25) -- (7.75,-2.25) -- (7.75,2) -- (-.25,2.25) -- cycle;
+  \MathMLBox{0}{0}{1.5}{1}{red};
+  \begin{scope}[shift=({3.75,0}),rotate=-28.07248693585295]
+  \fill[black!20] (-4.25,-.25) -- (4.25,-.25) --
+                    (4.25,.25) -- (-4.25,.25) -- cycle;
+  \draw[<->] (2,-.25) -- (2,0) node[right]{$\xi_8$} -- (2,.25);
+  \end{scope}
+  \draw[dashed,blue](-.25,-2.25) -- (7.75,-2.25) -- (7.75,2.25) -- (-.25,2.25)
+  -- cycle (-.25,0) -- (7.75,0);
+
+  \draw[<->] (0,0) -- (-.25,0) node[left]{$\frac{\xi_8}{2}$};
+  \draw[<->] (3.75,-2) -- (3.75,-2.25) node[above]{$\frac{\xi_8}{2}$};
+\end{tikzpicture}
+\label{MencloseUpDiagonalStrikeBoxModel}
+\end{figure}
+
+\item The {\tt downdiagonalstrike} notation is drawn as an
+  {\tt updiagonalstrike}
+  but the line strike goes from the top left corner to the bottom right corner.
+  Using SVG terminology, the
+  {\tt stroke-linecap} of the line is {\tt butt} \cite{SVG11}.
+\item The {\tt radical} notation is drawn as described for {\tt msqrt}
+  in section \ref{radicals}.
+\item The {\tt longdiv} notation is drawn as {\tt radical} but independent
+  of CSS {\tt direction}. U+221A SQUARE ROOT is replaced with
+  U+0028 LEFT PARENTHESIS. The rule thickness is $\xi_8$,
+  the gap between content and overbar is $3\xi_8$ and the extra ascender
+  is $\xi_8$.
+\item  To draw the {\tt circle} notation, we firts consider the ink box of
+  width $w$ and height $h$. We draw the ellipse
+  of axes the axes of symmetry of this ink box, of radii
+  $\frac{\sqrt{2}}{2} w$ and $\frac{\sqrt{2}}{2} h$ and of thickness $\xi_8$.
+  We ensure that the logical box also has space $\xi_8$ around each side
+  of the ellipse ink box.
+  \begin{figure}
+\centering
+\begin{tikzpicture}[yscale=-1]
+
+  \fill[blue!20]
+  (-5.803300858899106,-2.621320343559643)
+  rectangle (5.803300858899106,2.621320343559643);
+
+  \MathMLBox{-3.75}{0}{1.5}{1}{red};
+
+  \draw[black!20,line width=12]
+  (0,0) ellipse (5.553300858899106 and 2.371320343559643);
+
+  \draw[black!20]
+  (-3.75,-1.5) rectangle (3.75,1.5);
+
+  \draw[dashed,blue]
+  (-6.303300858899106,-3.121320343559643)
+  rectangle (6.303300858899106,3.121320343559643)
+  (-6.303300858899106,0) -- (6.303300858899106,0);
+
+  \draw[<->] (-6.303300858899106,0) --
+  (-6,0)node[below]{$\xi_8$} --
+  (-5.803300858899106,0);
+
+  \draw[<->] (-5.803300858899106,0) --
+  (-5.5,0)node[below]{$\xi_8$} --
+  (-5.303300858899106,0);
+
+  \draw[<->] (-1,-1.5) --
+  (-1,1)node[left]{Height} --
+  (-1,1.5);
+
+  \draw[<->] (0,-2.371320343559643) --
+  (0,-1)node[right]{$\sqrt{2}$ Height} --
+  (0,2.371320343559643);
+
+\end{tikzpicture}
+\label{MencloseCircleBoxModel}
+\end{figure}
+
+\item Other {\tt menclose} notations may be ignored.
+\end{enumerate}
 
 \subsection{Script and Limit Schemata}
 
