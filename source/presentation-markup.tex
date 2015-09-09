@@ -67,15 +67,15 @@ elements should be layout by making the $x$-axis pointing from right-to-left.
 
 \subsection{Token Elements}
 
-...
+TODO \lxAddClass{issue}
 
 \subsection{General Layout Schemata}
 
 \subsubsection{Horizontally Group Sub-Expressions {\tt <mrow>}}
 
-...
+TODO \lxAddClass{issue}
 
-\subsubsection{Fractions {\tt <mfrac>}}
+\subsubsection{Fractions {\tt <mfrac>}}\label{Fractions}
 
 The MathML specification describes {\tt mfrac} as follows \cite{MathML3}:
 %
@@ -763,19 +763,279 @@ compute each notation individually and take the union of the metrics:
 \item Other {\tt menclose} notations may be ignored.
 \end{enumerate}
 
-\subsection{Script and Limit Schemata}
+\subsection{Script and Limit Schemata}\label{ScriptAndLimitSchemata}
 
 \subsubsection{Subscripts and Superscripts {\tt <msub>}, {\tt <msup>},
-  {\tt <msubsup>}}
+  {\tt <msubsup>}}\label{SubscriptsSuperscripts}
+
+The MathML specification describes Subscripts and Superscripts as
+follows \cite{MathML3}:
+%
+\begin{quote}
+The msub element attaches a subscript to a base using the syntax
+%
+\begin{lstlisting}
+  <msub> base subscript </msub>
+\end{lstlisting}
+
+It increments {\tt scriptlevel} by 1, and sets {\tt displaystyle} to
+{\tt "false"}, within subscript, but leaves both attributes unchanged within
+base. [...]
+
+The {\tt msup} element attaches a superscript to a base using the syntax
+%
+\begin{lstlisting}
+  <msup> base superscript </msup>
+\end{lstlisting}
+
+It increments {\tt scriptlevel} by 1, and sets {\tt displaystyle} to
+{\tt "false"}, within superscript, but leaves both attributes unchanged within
+base. [...]
+
+The {\tt msubsup} element is used to attach both a subscript and superscript to
+a base expression.
+%
+\begin{lstlisting}
+  <msubsup> base subscript superscript </msubsup>
+\end{lstlisting}
+
+It increments {\tt scriptlevel} by 1, and sets {\tt displaystyle} to
+{\tt "false"}, within subscript and superscript, but leaves both attributes
+unchanged within base. [...]
+\end{quote}
+%
+
+The {\tt displaystyle} and {\tt scriptlevel} changes be achieved with the
+following style in the user agent stylesheet (section \ref{UAStylesheet}):
+%
+\begin{lstlisting}
+msub > :not(:first-child),
+msup > :not(:first-child),
+msubsup > :not(:first-child) {
+  mathml-script-level: +1;
+  mathml-math-style: inline;
+}
+\end{lstlisting}
+%
+
+TODO \lxAddClass{issue}
 
 \subsubsection{Underscripts and Overscripts  {\tt <munder>}, {\tt <mover>},
   {\tt <munderover>}}
 
+The MathML specification describes Underscripts and Overscripts as
+follows \cite{MathML3}:
+%
+\begin{quote}
+The {\tt munder} element attaches an accent or limit placed under a base using
+the syntax
+%
+\begin{lstlisting}
+<munder> base underscript </munder>
+\end{lstlisting}
+
+It always sets {\tt displaystyle} to {\tt "false"} within the underscript, but
+increments {\tt scriptlevel} by 1 only when {\tt accentunder} is
+{\tt "false"}. Within base, it always leaves both attributes unchanged.[...]
+
+If base is an operator with {\tt movablelimits="true"} (or an embellished
+operator whose {\tt mo} element core has {\tt movablelimits="true"}), and
+{\tt displaystyle="false"}, then underscript is drawn in a subscript position.
+In this case, the {\tt accentunder} attribute is ignored. [...]
+
+The {\tt mover} element attaches an accent or limit placed over a base using
+the syntax
+%
+\begin{lstlisting}
+<mover> base overscript </mover>
+\end{lstlisting}
+
+It always sets {\tt displaystyle} to {\tt "false"} within overscript, but
+increments {\tt scriptlevel} by 1 only when accent is "false". Within base, it
+always leaves both attributes unchanged.[...]
+
+If base is an operator with {\tt movablelimits="true"} (or an embellished
+operator whose {\tt mo} element core has {\tt movablelimits="true"}), and
+{\tt displaystyle="false"}, then overscript is drawn in a superscript position.
+In this case, the {\tt accent} attribute is ignored.[...]
+
+The {\tt munderover} element attaches accents or limits placed both over and
+under a base using the syntax
+%
+\begin{lstlisting}
+<munderover> base underscript overscript </munderover>
+\end{lstlisting}
+
+It always sets {\tt displaystyle} to {\tt "false"} within underscript and
+overscript, but increments {\tt scriptlevel} by 1 only when {\tt accentunder}
+or {\tt accent}, respectively, are {\tt "false"}. Within base, it always leaves
+both attributes unchanged. [...]
+
+If base is an operator with {\tt movablelimits="true"} (or an embellished
+operator whose {\tt mo} element core has {\tt movablelimits="true"}), and
+{\tt displaystyle="false"}, then underscript and overscript are drawn in a
+subscript and superscript position, respectively. In this case, the
+{\tt accentunder} and {\tt accent} attributes are ignored. [...]
+\end{quote}
+%
+
+The {\tt displaystyle} changes be achieved with the
+following style in the user agent stylesheet (section \ref{UAStylesheet}):
+%
+\begin{lstlisting}
+munder > :not(:first-child),
+mover > :not(:first-child),
+munderover > :not(:first-child) {
+  mathml-math-style: inline;
+}
+\end{lstlisting}
+%
+
+User Agents must perform the {\tt scriptlevel} increment by checking
+the appropriate {\tt accent} or {\tt accentunder} value, which can not be done
+by CSS only.
+
+In cases where underscript and overscript are drawn as subscript and
+superscript position then the layout algorithm is the same as section
+\ref{SubscriptsSuperscripts}. Note that in that case,
+{\tt accent} or {\tt accentunder} are ignored so the scriptlevel increment is
+always performed.
+
+TODO \lxAddClass{issue}
+
 \subsubsection{Prescripts and Tensor Indices \tt <mmultiscripts>}
+
+The MathML specification describes the {\tt mmultiscripts} element as
+follows \cite{MathML3}:
+%
+\begin{quote}
+Presubscripts and tensor notations are represented by a single element,
+{\tt mmultiscripts}, using the syntax:
+%
+\begin{lstlisting}
+<mmultiscripts>
+    base
+     (subscript superscript)*
+     [ <mprescripts/> (presubscript presuperscript)* ]
+</mmultiscripts>
+\end{lstlisting}
+
+This element allows the representation of any number of vertically-aligned
+pairs of subscripts and superscripts, attached to one base expression. It
+supports both postscripts and prescripts. Missing scripts can be represented
+by the empty element none.
+
+[...]
+
+The {\tt mmultiscripts} element increments {\tt scriptlevel} by 1, and sets
+{\tt displaystyle} to {\tt "false"}, within each of its arguments except base,
+but leaves both attributes unchanged within base. [...]
+\end{quote}
+%
+
+The {\tt displaystyle} and {\tt scriptlevel} changes be achieved with the
+following style in the user agent stylesheet (section \ref{UAStylesheet}):
+%
+\begin{lstlisting}
+mmultiscripts > :not(:first-child) {
+  mathml-script-level: +1;
+  mathml-math-style: inline;
+}
+\end{lstlisting}
+%
+
+TODO \lxAddClass{issue}
 
 \subsection{Tabular Math}\label{TabularMath}
 
-...
+The MathML specification describes tabular math as follows \cite{MathML3}:
+%
+\begin{quote}
+Matrices, arrays and other table-like mathematical notation are marked up using
+{\tt mtable}, {\tt mtr}, {\tt mlabeledtr} and {\tt mtd} elements. These
+elements are similar to the table, tr and td elements of HTML, except that they
+provide specialized attributes for the fine layout control necessary for
+commutative diagrams, block matrices and so on.
+\end{quote}
+%
+
+In the present specification, we restrict ourselves to a minimal implementation
+compatible with HTML tables. First the {\tt mtable} element must be treated as
+HTML table and by \cite{MathML3}, {\tt mtable} must accept a displaystyle
+attribute with default value {\tt false}. To implement that, one may rely on
+the following rules for the user agent stylesheet (section \ref{UAStylesheet}):
+%
+\begin{lstlisting}
+  mtable {
+    display: inline-table;
+    border-collapse: separate;
+    border-spacing: 0;
+    mathml-math-style: inline;
+  }
+  mtable[displaystyle="true"] {
+    mathml-math-style: display;
+  }
+\end{lstlisting}
+%
+
+In addition, user agents may use the following rules to emulate the {\tt frame}
+attribute:
+%
+\begin{lstlisting}
+  mtable[frame="none"] {
+    border: none;
+  }
+  mtable[frame="solid"] {
+    border: solid thin;
+  }
+  mtable[frame="dashed"] {
+    border: dashed thin;
+  }
+\end{lstlisting}
+%
+
+The {\tt mtr} and {\tt mlabeledtr} elements must be treated as HTML table rows
+and the label of {\tt mlabeledtr} element must be hidden by default.
+The default value of {\tt rowalign} must be {\tt baseline}.
+One may rely on the following rules for the user agent stylesheet
+(section \ref{UAStylesheet}):
+
+%
+\begin{lstlisting}
+mtr, mlabeledtr {
+  display: table-row;
+  vertical-align: baseline;
+}
+mlabeledtr > mtd:first-child {
+  display: none;
+}
+\end{lstlisting}
+%
+
+Finally, the {\tt mtd} elements must be treated as HTML table cell.
+The default value of {\tt rowalign} must be {\tt baseline} and
+the default value of {\tt colulmnalign} must be {\tt center}. This can be
+achieved with the following CSS:
+
+%
+\begin{lstlisting}
+mtd {
+  display: table-cell;
+  vertical-align: inherit;
+  text-align: center;
+}
+\end{lstlisting}
+%
+
+The {\tt mtd} element must also support the {\tt columnspan} (sic) and
+{\tt rowspan} attributes. This can be implemented the same as
+the HTML {\tt colspan} and {\tt rowspan} attributes.
+
+The layout for other tabular elements and attributes are not specified by this
+specification.
+
+Suggests some CSS to emulate the default rowspacing, columnspacing,
+framespacing? \lxAddClass{issue}
 
 \subsection{Elementary Math}
 

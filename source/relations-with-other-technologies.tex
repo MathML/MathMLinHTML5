@@ -34,7 +34,7 @@ user agents must claim support for the extension of name
 An algorithm to decide the visible child of the {\tt <semantics>} element is
 proposed in section \ref{semantics}.
 
-\subsubsection{MathML 3}
+\subsubsection{MathML}
 
 All MathML elements accepts the {\tt id}, {\tt class} and {\tt style} attributes
 \cite{MathML3}.
@@ -79,7 +79,9 @@ specification may just be ignored. This includes deprecated attributes or
 Content Markup descripted in chapter 4 of the MathML 3 specification
 \cite{MathML3}.
 
-\subsection{Text layout and Open Font Format}
+\subsection{Text and Math layout}
+
+\subsubsection{Open Font Format}
 
 User agents must be able to perfom complex text layout \cite{CTL} using
 fonts under the Open Font Format \cite{OpenFontFormat3}. In particular, they
@@ -101,10 +103,8 @@ and {\tt rtlm} (Right-to-left mirrored forms) \cite{OpenFontFormat3}.
 
 User agents may also support the CSS {\tt font-variant-alternates} property
 and corresponding OpenType font features \cite{CSS3Font} \cite{OpenFontFormat3}.
-That way, font designers and page
-authors can rely on it to provide a calligraphic style for the
-Unicode Mathematical script characters. This allows to distinguish between
-LaTeX's {\tt mathscr} and {\tt mathcal} commands.
+Typically this is used to provide both Chancery and Spencerian style for
+the Unicode MATHEMATICAL SCRIPT characters.
 
 User agents must be able to read information from the
 OpenType MATH table \cite{OpenFontFormat3}.
@@ -115,6 +115,34 @@ certain width or height, find a variant shape glyph (or a construct created by
 putting several glyphs together) that has the required measurement.
 
 Add reference to section about {\tt mo} operators. \lxAddClass{issue}
+
+\subsubsection{LaTeX}
+
+Mathematical rendering rules in this specification are implicitly based on
+MathML, OpenType MATH table and the TeXBook
+\cite{MathML3} \cite{OpenFontFormat3} \cite{TeXBook}. In this section, we
+describe more precisely some rules from the TeXBook.
+
+In addition to MathML's {\tt displaystyle} and {\tt scriptlevel}, LaTeX has
+a ``cramped'' property, which is involved in the determination of script shifts.
+It is initially unset on the {\tt math} element and in general
+all the children inherits the ``cramped'' property from their parent.
+However, it is set to true in the following children:
+
+\begin{enumerate}
+\item The denominator of an {\tt mfrac} element. See section \ref{Fractions}.
+\item The subscripts of the {\tt msub}, {\tt msubsup},
+  {\tt munder} and {\tt munderover} elements.
+  See section \ref{ScriptAndLimitSchemata}.
+\item The overscript of the
+  {\tt mover} and {\tt munderover} elements when it is an {\tt accent} per
+  the MathML specification. See section \ref{ScriptAndLimitSchemata}.
+\item The children of the {\tt msqrt} and {\tt mroot}
+  elements as well as the {\tt menclose} element that have {\tt radical}
+  notation.
+\end{enumerate}
+
+Discuss spacing https://dxr.mozilla.org/mozilla-central/source/layout/mathml/nsMathMLContainerFrame.cpp\#1076 \lxAddClass{issue}
 
 \subsection{CSS Styling}
 
@@ -243,17 +271,26 @@ mtable {
 mtable[displaystyle="true"] {
   mathml-math-style: display;
 }
+mtable[frame="none"] {
+  border: none;
+}
+mtable[frame="solid"] {
+  border: solid thin;
+}
+mtable[frame="dashed"] {
+  border: dashed thin;
+}
 mtr, mlabeledtr {
   display: table-row;
   vertical-align: baseline;
+}
+mlabeledtr > mtd:first-child {
+  display: none;
 }
 mtd {
   display: table-cell;
   vertical-align: inherit;
   text-align: center;
-}
-mlabeledtr > mtd:first-child {
-  display: none;
 }
 
 /* The <ms> element */
