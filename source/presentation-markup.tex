@@ -65,6 +65,12 @@ Note that the schemas in this specification are drawn assuming left-to-right
 directionality. If the CSS {\tt direction} is set to right-to-left, then the
 elements should be layout by making the $x$-axis pointing from right-to-left.
 
+Add italic correction ; how it is preserved when the bounding box does not
+change (e.g. mrow) \lxAddClass{issue}
+
+Add top accent attachment how it is preserved when the bounding box does not
+change (e.g. mrow) \lxAddClass{issue}
+
 \subsection{Token Elements}
 
 TODO \lxAddClass{issue}
@@ -94,7 +100,8 @@ denominator.
 \end{quote}
 
 The {\tt displaystyle} and {\tt scriptlevel} changes be achieved with the
-following style in the user agent stylesheet (section \ref{UAStylesheet}):
+following style in the user agent stylesheet as suggested in section
+\ref{UAStylesheet}:
 %
 \begin{lstlisting}
   mfrac > * {
@@ -190,8 +197,6 @@ If the numerator is an embellished operator and the {\tt mfrac} element is the
 outermost element in this embellished operator hierarchy then the operator
 leading and trailing spaces must be added around the fraction.
 
-Gecko always adds 1px around the fraction \lxAddClass{issue}
-
 User agents may extend the box model to support the {\tt numalign},
 {\tt denomalign} and {\tt bevelled} attributes \cite{MathML3}.
 
@@ -222,7 +227,8 @@ the left, along with the index in the case of mroot.
 \end{quote}
 
 The {\tt displaystyle} and {\tt scriptlevel} changes be achieved with the
-following style in the user agent stylesheet (section \ref{UAStylesheet}):
+following style in the user agent stylesheet as suggested in section
+\ref{UAStylesheet}:
 %
 \begin{lstlisting}
   mroot > :not(:first-child) {
@@ -248,8 +254,6 @@ The width is given by the sum of the width of the surd and of the base.
 The baseline of the square root matches the baseline of the base.
 The ink box is determined from the ink boxes of the surd and base while the
 logical box takes into account the extra ascender
-
-Gecko adds an extra descender below the square root. \lxAddClass{issue}
 
 \begin{figure}
 \centering
@@ -296,8 +300,9 @@ negative,
 which means that the root element will have some space before it and that the
 root index will overlap the surd.
 For the vertical metrics of the {\tt mroot} element, we first take the baseline
-of $B$ as the baseline. Then if we graduate the ink height of $B$ with a linear
-scale going from 0 (bottom) to 1 (top) then the baseline of the root index will
+of $B$ as the baseline. We graduate the ink height of $B$ with a linear
+scale going from the bottom at coordinate 0 to the top at coordinate 1.
+Then the baseline of the root index will
 be vertically positioned at coordinate {\tt RadicalDegreeBottomRaisePercent}.
 Finally, we take into consideration the box of the root index and $B$ to deduce
 the metrics for the whole box of the {\tt mroot} element.
@@ -319,13 +324,13 @@ the metrics for the whole box of the {\tt mroot} element.
 
   \MathMLBox{1}{-1.5}{.5}{1}{red}
 
+  \draw[dashed,blue] (0,-3.5) -- (11,-3.5) -- (11,3.75) -- (0,3.75) -- cycle
+  (0,1)--(11,1);
+
   \draw[dashed,orange](11,3.75)--(-2,3.75) node[left]{Bottom (0\%)};
   \draw[dashed,orange](11,-1.5)--(-2,-1.5) node[left]
        {Radical Degree Bottom Raise Percent};
   \draw[dashed,orange](11,-2.5)--(-2,-2.5) node[left]{Top (100\%)};
-
-  \draw[dashed,blue] (0,-3.5) -- (11,-3.5) -- (11,3.75) -- (0,3.75) -- cycle
-  (0,1)--(11,1);
 
   \draw[->,black] (0,0) -- (.5,0) node[left,rotate=90]
        {Radical Kerning Before Degree} -- (1,0);
@@ -377,10 +382,10 @@ multiple children. [...]
 
 For the layout algorithm described in this specification, the
 {\tt merror} element must be treated the same as the {\tt mrow} element.
-The user agent stylesheet (section \ref{UAStylesheet})
-must set some CSS properties on the {\tt merror}
-element in order to highlight the error. This can for example be achieved with
-the rule:
+The user agent stylesheet must set some CSS properties on the {\tt merror}
+element in order to highlight the error.
+As suggested in section \ref{UAStylesheet}, this can for example be achieved
+with the rule:
 %
 \begin{lstlisting}
 merror {
@@ -465,10 +470,10 @@ The {\tt mphantom} element accepts a single argument possibly being an inferred
 
 For the layout algorithm described in this specification, the
 {\tt mphantom} element must be treated the same as the {\tt mrow} element.
-The user agent stylesheet (section \ref{UAStylesheet})
-must set some CSS properties on the {\tt mphantom}
-element in order to hide its content. This can for example be achieved with
-the rule:
+The user agent stylesheet must set some CSS properties on the {\tt mphantom}
+element in order to hide its content.
+As suggested in section \ref{UAStylesheet}, this can for example be achieved
+with the rule:
 %
 \begin{lstlisting}
 mphantom {
@@ -805,8 +810,9 @@ unchanged within base. [...]
 \end{quote}
 %
 
-The {\tt displaystyle} and {\tt scriptlevel} changes be achieved with the
-following style in the user agent stylesheet (section \ref{UAStylesheet}):
+As suggested in section section \ref{UAStylesheet}, the {\tt displaystyle} and
+{\tt scriptlevel} changes be achieved with the
+following style in the user agent stylesheet:
 %
 \begin{lstlisting}
 msub > :not(:first-child),
@@ -824,26 +830,34 @@ by {\tt SubShift}. {\tt SubShift} is initially set to {\tt SubscriptShiftDown}
 and is increased until the shift {\tt SubTopShift} for the top of the subscript
 is at least {\tt SubscriptTopMax}. When determining
 the logical box, a space of width {\tt SpaceAfterScript} is added after
-the subscript.
+the subscript. By default, the leading edge of the subscript is aligned with
+the trailing edge of the base. However, if the base is an operator with
+{\tt largeop="true"} (or an embellished operator whose {\tt mo} element core
+has {\tt largeop="true"}) the subscript is horizontally shifted backward
+by the italic correction of the base.
 
 \begin{figure}
 \centering
   \begin{tikzpicture}[yscale=-1]
 
-  \fill[blue!10](0,-1.5) rectangle (7.5,3.75);
+  \fill[blue!10](0,-1.5) rectangle (7,3.75);
 
   \MathMLBox{0}{0}{1}{1}{red};
 
-  \MathMLBox{5}{3}{.5}{.5}{green};
+  \MathMLBox{4.5}{3}{.5}{.5}{green};
 
-  \draw[dashed,blue](0,-2) rectangle(8,4)
-  (0,0)--(8,0);
+  \draw[dashed,blue](0,-2) rectangle(7.5,4)
+  (0,0)--(7.5,0);
 
-   \draw[->] (5.5,0) -- (5.5,1)node[below,rotate=90]{SubShift} -- (5.5,3);
+   \draw[->] (5,0) -- (5,1)node[below,rotate=90]{SubShift} -- (5,3);
 
-  \draw[->] (6.5,0) -- (6.5,1)node[below,rotate=90]{SubTopShift} -- (6.5,2.25);
+   \draw[orange,->] (5,0) -- (4.5,0);
+   \draw[orange] (4.75, 1) node{LargeOpItalicCorrection};
+   \draw[dashed,orange] (4.5,0) -- (4.5,3);
 
-  \draw[<->] (7.5,3) -- (7.75,3)node[right,rotate=90]{SpaceAfterScript} -- (8,3);
+   \draw[->] (6,0) -- (6,1)node[below,rotate=90]{SubTopShift} -- (6,2.25);
+
+   \draw[<->] (7,3) -- (7.25,3)node[right,rotate=90]{SpaceAfterScript} -- (7.5,3);
 
 \end{tikzpicture}
 \label{MsubBoxModel}
@@ -851,33 +865,41 @@ the subscript.
 
 The {\tt msup} element is laid out as shown on figure \ref{MsupBoxModel}.
 The baseline is the baseline of the base and the superscript is shifted up
-by {\tt SuperShift}. If the {\tt msup} element is cramped then
+by {\tt SuperShift}. If the {\tt msup} element is cramped
+(section \ref{LaTeX})
 {\tt SuperShift} is initially set to {\tt SuperscriptShiftUpCramped} otherwise
-it is set to {\tt SuperscriptShiftUp} (see section \ref{LaTeX}).
+it is set to {\tt SuperscriptShiftUp}.
 {\tt SuperShift} is increased until the shift for the bottom of the superscript
 {\tt SuperBottomShift} is at least {\tt SuperscriptBottomMin}. When determining
 the logical box, a space of width {\tt SpaceAfterScript} is added after
-the superscript.
+the superscript. By default, the leading edge of the superscript is aligned with
+the trailing edge of the base and shifted forward by the italic correction
+of the base, except if the base is an operator with
+{\tt largeop="true"} (or an embellished operator whose {\tt mo} element core
+has {\tt largeop="true"}).
 
 \begin{figure}
 \centering
   \begin{tikzpicture}[yscale=-1]
 
-  \fill[blue!10](0,1.5) rectangle (7.5,-3.75);
+  \fill[blue!10](0,1.5) rectangle (8,-3.75);
 
   \MathMLBox{0}{0}{1}{1}{red};
 
-  \MathMLBox{5}{-3}{.5}{.5}{green};
+  \MathMLBox{5.5}{-3}{.5}{.5}{green};
 
-  \draw[dashed,blue](0,2) rectangle(8,-4)
-  (0,0)--(8,0);
+  \draw[dashed,blue](0,2) rectangle(8.5,-4)
+  (0,0)--(8.5,0);
 
-  \draw[->] (5.5,0) -- (5.5,-1)node[below,rotate=90]{SuperShift} -- (5.5,-3);
+  \draw[->] (6,0) -- (6,-1)node[below,rotate=90]{SuperShift} -- (6,-3);
 
-  \draw[->] (6.5,0) -- (6.5,-1)node[below,rotate=90]{SuperBottomShift} -- (6.5,-2.25);
+  \draw[orange,->] (5,0) --
+   (5.25,0)node[below]{ItalicCorrection} -- (5.5,0);
+  \draw[dashed,orange] (5.5,0)--(5.5,-3);
 
-  \draw[<->] (7.5,-3) -- (7.75,-3)node[left,rotate=90]{SpaceAfterScript} -- (8,-3);
+  \draw[->] (7,0) -- (7,-1.5)node[below,rotate=90]{SuperBottomShift} -- (7,-2.25);
 
+  \draw[<->] (8,-3) -- (8.25,-3)node[left,rotate=90]{SpaceAfterScript} -- (8.5,-3);
 \end{tikzpicture}
 \label{MsupBoxModel}
 \end{figure}
@@ -886,7 +908,7 @@ The {\tt msubsup} element is laid out as shown on figure \ref{MsubsupBoxModel}.
 The baseline is the baseline of the base, the subscript is shifted down
 by {\tt SubShift} and the superscript is shifted up by {\tt SuperShift}.
 {\tt SubShift} is initially set to {\tt SubscriptShiftDown}.
-If the {\tt msubsup} element is cramped then
+If the {\tt msubsup} element is cramped (section \ref{LaTeX}) then
 {\tt SuperShift} must be at least {\tt SuperscriptShiftUpCramped} otherwise
 it must be at least {\tt SuperscriptShiftUp} (see section \ref{LaTeX}).
 {\tt SupShift} is increased until the shift for the bottom of the superscript
@@ -897,7 +919,12 @@ This is first done by continuing to shift the superscript up as long as the
 {\tt SupBottomShift} does not exceed {\tt SuperscriptBottomMaxWithSubscript}
 and next by continuing to shift the subscript down. When determining
 the logical box, a space of width {\tt SpaceAfterScript} is added after
-each script.
+each script. By default the leading edges of the scripts are aligned with
+the trailing edge and either the superscript is shifted forward by the italic
+correction of the base. However, if the base is an operator with
+{\tt largeop="true"} (or an embellished operator whose {\tt mo} element core
+has {\tt largeop="true"}) then instead the subscript is shifted forward by the
+italic correction of the base.
 
 \begin{figure}
 \centering
@@ -918,7 +945,7 @@ each script.
 
   \draw[<->] (12.5,-3) -- (12.75,-3)node[left,rotate=90]{SpaceAfterScript} -- (13,-3);
 
-  \MathMLBox{5}{3}{1}{.5}{orange};
+  \MathMLBox{5}{3}{1}{.5}{green};
 
    \draw[->] (5.75,0) -- (5.75,1)node[below,rotate=90]{SubShift} -- (5.75,3);
 
@@ -932,10 +959,6 @@ each script.
 \end{tikzpicture}
 \label{MsubsupBoxModel}
 \end{figure}
-
-Interpretation of ``empty'' scripts \lxAddClass{issue}
-
-Discuss horizontal positioning of scripts (italic correction) \lxAddClass{issue}
 
 User Agents may ignore the attributes {\tt subscriptshift} and
 {\tt superscriptshift} or may interpret them as minimal values
@@ -1000,8 +1023,11 @@ subscript and superscript position, respectively. In this case, the
 \end{quote}
 %
 
-The {\tt displaystyle} changes be achieved with the
-following style in the user agent stylesheet (section \ref{UAStylesheet}):
+User Agents must perform the {\tt scriptlevel} increment by checking
+the appropriate {\tt accent} or {\tt accentunder} value, which can not be done
+using only CSS. However, {\tt displaystyle} changes can be achieved with the
+following style in the user agent stylesheet, as suggested in section
+\ref{UAStylesheet}:
 %
 \begin{lstlisting}
 munder > :not(:first-child),
@@ -1012,17 +1038,102 @@ munderover > :not(:first-child) {
 \end{lstlisting}
 %
 
-User Agents must perform the {\tt scriptlevel} increment by checking
-the appropriate {\tt accent} or {\tt accentunder} value, which can not be done
-by CSS only.
-
 In cases where underscript and overscript are drawn as subscript and
 superscript position then the layout algorithm is the same as section
 \ref{SubscriptsSuperscripts}. Note that in that case,
 {\tt accent} or {\tt accentunder} are ignored so the scriptlevel increment is
 always performed.
 
-TODO \lxAddClass{issue}
+The general layout of {\tt munderover} is shown on figure
+\ref{MunderoverBoxModel}.
+The overscript is placed above the base, the underscript below the base
+and by default are aligned with respect to their geometrical center.
+If the overscript is an accent and has a {\tt TopAccentAttachment}
+value, then this value may be used to horizontally align the accent instead
+of its geometrical center.
+{\tt OverShift} is the distance between the top ink
+of the base and the baseline of the overscript, {\tt OverGap} is the distance
+between the top ink of the base and the bottom ink of the overscript,
+{\tt OverExtraAscender} is extra space to add above the overscript when
+determining the logical box. {\tt UnderShift}, {\tt UnderGap} and
+{\tt UnderExtraAscender} are defined similarly for the underscripts.
+We distinguish three cases:
+
+\begin{enumerate}
+\item If the base is an operator with {\tt largeop="true"}
+  (or an embellished operator whose {\tt mo} element core has
+  {\tt largeop="true"}) then ensure that {\tt OverGap} is at least
+  {\tt UpperLimitGapMin}, that {\tt OverShift} is at least
+  {\tt UpperLimitBaselineRiseMin} that {\tt UnderGap} is at least
+  {\tt LowerLimitGapMin}, that {\tt UnderShift} is at least
+  {\tt LowerLimitBaselineDropMin}. {\tt OverExtraAscender} and
+  {\tt UnderExtraAscender} are zero. The
+  underscript is shifted backward by half the italic correction of the base.
+  The overscript is shifted forward by half the italic correction of the base.
+\item If the base is an operator with {\tt stretchy="true"}
+  (or an embellished operator whose {\tt mo} element core has
+  {\tt stretchy="true"}). Then ensure that {\tt OverGap} is at least
+  {\tt StretchStackGapBelowMin}, that {\tt OverShift} is at least
+  {\tt StretchStackTopShiftUp} that {\tt UnderGap} is at least
+  {\tt StretchStackGapAboveMin}, that {\tt UnderShift} is at least
+  {\tt StretchStackBottomShiftDown}. {\tt OverExtraAscender} and
+  {\tt UnderExtraAscender} are zero.
+\item In other cases we proceed as follows.
+  We first ensure that {\tt UnderGap} is at least  {\tt UnderbarVerticalGap}.
+  If overscript is an accent
+  and the ink ascent of the base does not exceed {\tt AccentBaseHeight}
+  then we just align the baseline of the overscript with the baseline
+  of the base. Otherwise, we ensure that {\tt OverGap} is at least
+  {\tt OverbarVerticalGap} Finally,
+  {\tt OverExtraAscender} and
+  {\tt OverExtraAscender} are respectively set to {\tt OverbarExtraAscender}
+  and {\tt UnderExtraAscender}.
+\end{enumerate}
+
+\begin{figure}
+\centering
+  \begin{tikzpicture}[yscale=-1]
+
+  \fill[blue!10](0,-4.25) rectangle (5,4.25);
+
+  \MathMLBox{0.75}{3.5}{.5}{.5}{green};
+  \draw[green,dashed](2,4.5)--(2,2.5);
+
+  \MathMLBox{1.75}{-3.5}{.5}{.5}{green};
+  \draw[green,dashed](3,-4.5)--(3,-2.5);
+
+  \MathMLBox{0}{0}{1}{1}{red};
+  \draw[red,dashed](2.5,-4.5)--(2.5,-2) (2.5,2)--(2.5,4.5);
+
+  \draw[<->] (4,-1.5) -- (4,-2.5)node[right]{OverGap} -- (4,-2.75);
+  \draw[<->] (2,-1.5) -- (2,-3)node[left]{OverShift} -- (2,-3.5);
+  \draw[<->] (2.5,-4.25) --
+             (2.5,-4.5)node[left]{OverExtraAscender} -- (2.5,-4.75);
+
+  \draw[<->] (1,1.5) -- (1,2.5)node[left]{UnderGap} -- (1,2.75);
+  \draw[<->] (3,1.5) -- (3,3)node[right]{UnderShift} -- (3,3.5);
+  \draw[<->] (2.5,4.25) --
+             (2.5,4.5)node[right]{UnderExtraAscender} -- (2.5,4.75);
+
+  \draw[dashed,blue](0,-4.75) rectangle (5,4.75)
+  (0,0)--(5,0);
+
+  \draw[orange,->] (2,-.5) -- (3,-.5);
+  \draw[orange] (2.5,-1)node{LargeOpItalicCorrection} ;
+  \draw[orange,dashed](2,2.5) -- (2,-.5) (3,-2.5) --(3,-.5);
+
+\end{tikzpicture}
+\label{MunderoverBoxModel}
+\end{figure}
+
+The layout of {\tt munder} and {\tt mover} is the same as the one of
+{\tt munderover} except that one script and its corresponding extra space
+are ignored.
+
+User Agents may ignore the {\tt align} attribute. Alternatively, when it
+is either {\tt left} or {\tt right}, then it may be used to the
+alignment of the base, underscript and overscript along the specified edge.
+Note that these values are independent of CSS {\tt direction}.
 
 \subsubsection{Prescripts and Tensor Indices \tt <mmultiscripts>}
 
@@ -1044,7 +1155,7 @@ Presubscripts and tensor notations are represented by a single element,
 This element allows the representation of any number of vertically-aligned
 pairs of subscripts and superscripts, attached to one base expression. It
 supports both postscripts and prescripts. Missing scripts can be represented
-by the empty element none.
+by the empty element {\tt none}.
 
 [...]
 
@@ -1055,7 +1166,8 @@ but leaves both attributes unchanged within base. [...]
 %
 
 The {\tt displaystyle} and {\tt scriptlevel} changes be achieved with the
-following style in the user agent stylesheet (section \ref{UAStylesheet}):
+following style in the user agent stylesheet as suggested in section
+\ref{UAStylesheet}:
 %
 \begin{lstlisting}
 mmultiscripts > :not(:first-child) {
@@ -1072,9 +1184,16 @@ contructions that are equivalent to {\tt msubsup}. Here is a possible algorithm
 that is represented on figure \ref{MmultiscriptsBoxModel}.
 \begin{enumerate}
 \item Determine the vertical shifts for each subscript/superscript pair
-  and use the maximum values for all the scripts.
+  using the algorithm for {\tt msub} (if the superscript is {\tt none}),
+  {\tt msup} (if the subscript is {\tt none}) or {\tt msubsup}
+  (if none of the scripts are {\tt none}) or otherwise use shifts of zero
+  (if both scripts of the pair are {\tt none}). When placing the scripts,
+  use the maximum of the subscript shift for all subscript and
+  the maximum of the superscript shift for all superscripts.
 \item For the horizontal layout of postscripts, use the trailing edge of the
-  base or of previous pair as the leading edge of the current pair.
+  base or of the previous pair as the leading edge of the current pair.
+  For each pair, apply the same italic correction described for
+  {\tt msubsup} in section \ref{SubscriptsSuperscripts}.
   Apply the same italic corrections for all these postscripts.
 \item For the horizontal layout of prescripts, use the leading edge of the
   base or of next pair as the trailing edge of the current pair. Do not apply
@@ -1147,7 +1266,8 @@ In the present specification, we restrict ourselves to a minimal implementation
 compatible with HTML tables. First the {\tt mtable} element must be treated as
 HTML table and by \cite{MathML3}, {\tt mtable} must accept a displaystyle
 attribute with default value {\tt false}. To implement that, one may rely on
-the following rules for the user agent stylesheet (section \ref{UAStylesheet}):
+the following rules for the user agent stylesheet as
+suggested in section \ref{UAStylesheet}:
 %
 \begin{lstlisting}
   mtable {
@@ -1182,7 +1302,7 @@ The {\tt mtr} and {\tt mlabeledtr} elements must be treated as HTML table rows
 and the label of {\tt mlabeledtr} element must be hidden by default.
 The default value of {\tt rowalign} must be {\tt baseline}.
 One may rely on the following rules for the user agent stylesheet
-(section \ref{UAStylesheet}):
+as suggested in section \ref{UAStylesheet}:
 
 %
 \begin{lstlisting}
@@ -1293,7 +1413,7 @@ event. This specification does not define how these DOM events are propagated
 or how to change the default behavior.
 
 Given the similarity with the {\tt semantics} element
-(section \ref{semantics}), it is
+described in section \ref{semantics}, it is
 suggested to share the implementation of {\tt semantics} and {\tt maction}.
 
 \subsection{Semantics and Presentation}\label{semantics}
@@ -1347,5 +1467,5 @@ empty {\tt mrow} element or as an {\tt merror} element with some error message
 indicating invalid markup.
 
 Given the similarity with the {\tt maction} element
-(section \ref{maction}), it is
+described in section \ref{maction}, it is
 suggested to share the implementation of {\tt semantics} and {\tt maction}.
