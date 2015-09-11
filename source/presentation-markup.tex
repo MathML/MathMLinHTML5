@@ -389,7 +389,7 @@ merror {
 }
 \end{lstlisting}
 
-\subsubsection{ Adjust Space Around Content {\tt <mpadded>}}\label{mpadded}
+\subsubsection{Adjust Space Around Content {\tt <mpadded>}}\label{mpadded}
 
 The MathML specification describes {\tt mpadded} as follows \cite{MathML3}:
 %
@@ -632,7 +632,7 @@ compute each notation individually and take the union of the metrics:
   \draw[<->] (-2,0) -- (-2.25,0)node[below]{$\xi_8$} -- (-2.5,0);
 
   \draw[<->] (4,1.5) -- (4,2.25)node[left]{$3\xi_8$} -- (4,3);
-  \draw[<->] (4,3.5) -- (4,3.25)node[left]{$3\xi_8$} -- (4,3);
+  \draw[<->] (4,3.5) -- (4,3.25)node[left]{$\xi_8$} -- (4,3);
   \draw[<->] (4,3.5) -- (4,3.75)node[left]{$\xi_8$} -- (4,4);
 
 \end{tikzpicture}
@@ -818,7 +818,128 @@ msubsup > :not(:first-child) {
 \end{lstlisting}
 %
 
-TODO \lxAddClass{issue}
+The {\tt msub} element is laid out as shown on figure \ref{MsubBoxModel}.
+The baseline is the baseline of the base and the subscript is shifted down
+by {\tt SubShift}. {\tt SubShift} is initially set to {\tt SubscriptShiftDown}
+and is increased until the shift {\tt SubTopShift} for the top of the subscript
+is at least {\tt SubscriptTopMax}. When determining
+the logical box, a space of width {\tt SpaceAfterScript} is added after
+the subscript.
+
+\begin{figure}
+\centering
+  \begin{tikzpicture}[yscale=-1]
+
+  \fill[blue!10](0,-1.5) rectangle (7.5,3.75);
+
+  \MathMLBox{0}{0}{1}{1}{red};
+
+  \MathMLBox{5}{3}{.5}{.5}{green};
+
+  \draw[dashed,blue](0,-2) rectangle(8,4)
+  (0,0)--(8,0);
+
+   \draw[->] (5.5,0) -- (5.5,1)node[below,rotate=90]{SubShift} -- (5.5,3);
+
+  \draw[->] (6.5,0) -- (6.5,1)node[below,rotate=90]{SubTopShift} -- (6.5,2.25);
+
+  \draw[<->] (7.5,3) -- (7.75,3)node[right,rotate=90]{SpaceAfterScript} -- (8,3);
+
+\end{tikzpicture}
+\label{MsubBoxModel}
+\end{figure}
+
+The {\tt msup} element is laid out as shown on figure \ref{MsupBoxModel}.
+The baseline is the baseline of the base and the superscript is shifted up
+by {\tt SuperShift}. If the {\tt msup} element is cramped then
+{\tt SuperShift} is initially set to {\tt SuperscriptShiftUpCramped} otherwise
+it is set to {\tt SuperscriptShiftUp} (see section \ref{LaTeX}).
+{\tt SuperShift} is increased until the shift for the bottom of the superscript
+{\tt SuperBottomShift} is at least {\tt SuperscriptBottomMin}. When determining
+the logical box, a space of width {\tt SpaceAfterScript} is added after
+the superscript.
+
+\begin{figure}
+\centering
+  \begin{tikzpicture}[yscale=-1]
+
+  \fill[blue!10](0,1.5) rectangle (7.5,-3.75);
+
+  \MathMLBox{0}{0}{1}{1}{red};
+
+  \MathMLBox{5}{-3}{.5}{.5}{green};
+
+  \draw[dashed,blue](0,2) rectangle(8,-4)
+  (0,0)--(8,0);
+
+  \draw[->] (5.5,0) -- (5.5,-1)node[below,rotate=90]{SuperShift} -- (5.5,-3);
+
+  \draw[->] (6.5,0) -- (6.5,-1)node[below,rotate=90]{SuperBottomShift} -- (6.5,-2.25);
+
+  \draw[<->] (7.5,-3) -- (7.75,-3)node[left,rotate=90]{SpaceAfterScript} -- (8,-3);
+
+\end{tikzpicture}
+\label{MsupBoxModel}
+\end{figure}
+
+The {\tt msubsup} element is laid out as shown on figure \ref{MsubsupBoxModel}.
+The baseline is the baseline of the base, the subscript is shifted down
+by {\tt SubShift} and the superscript is shifted up by {\tt SuperShift}.
+{\tt SubShift} is initially set to {\tt SubscriptShiftDown}.
+If the {\tt msubsup} element is cramped then
+{\tt SuperShift} must be at least {\tt SuperscriptShiftUpCramped} otherwise
+it must be at least {\tt SuperscriptShiftUp} (see section \ref{LaTeX}).
+{\tt SupShift} is increased until the shift for the bottom of the superscript
+{\tt SupBottomShift} is at least {\tt SuperscriptBottomMin}.
+We then increase the gap {\tt SubSuperGap} between the bottom of the superscript
+and the top of the subscript until it is at least {\tt SubSuperscriptGapMin}:
+This is first done by continuing to shift the superscript up as long as the
+{\tt SupBottomShift} does not exceed {\tt SuperscriptBottomMaxWithSubscript}
+and next by continuing to shift the subscript down. When determining
+the logical box, a space of width {\tt SpaceAfterScript} is added after
+each script.
+
+\begin{figure}
+\centering
+  \begin{tikzpicture}[yscale=-1]
+
+  \fill[blue!10](0,3.75) rectangle (13,-3.75);
+
+  \MathMLBox{0}{0}{1}{1}{red};
+
+  \MathMLBox{5}{-3}{1.5}{.5}{green};
+
+  \draw[dashed,blue](0,4) rectangle(13,-4)
+  (0,0)--(13,0);
+
+  \draw[->] (5.5,0) -- (5.5,-1)node[below,rotate=90]{SuperShift} -- (5.5,-3);
+
+  \draw[->] (6.5,0) -- (6.5,-1.75)node[below,rotate=90]{SuperBottomShift} -- (6.5,-2.25);
+
+  \draw[<->] (12.5,-3) -- (12.75,-3)node[left,rotate=90]{SpaceAfterScript} -- (13,-3);
+
+  \MathMLBox{5}{3}{1}{.5}{orange};
+
+   \draw[->] (5.75,0) -- (5.75,1)node[below,rotate=90]{SubShift} -- (5.75,3);
+
+  \draw[->] (6.75,0) -- (6.75,1)node[below,rotate=90]{SubTopShift} -- (6.75,2.25);
+
+  \draw[<->] (10,3) -- (10.25,3)node[right,rotate=90]{SpaceAfterScript} -- (10.5,3);
+
+   \draw[<->] (8.5,-2.25) -- (8.5,-2)node[right]{SubSuperGap} -- (8.5,2.25);
+
+
+\end{tikzpicture}
+\label{MsubsupBoxModel}
+\end{figure}
+
+Interpretation of ``empty'' scripts \lxAddClass{issue}
+
+Discuss horizontal positioning of scripts (italic correction) \lxAddClass{issue}
+
+User Agents may ignore the attributes {\tt subscriptshift} and
+{\tt superscriptshift} or may interpret them as minimal values
+to satisfy when determining {\tt SubShift} and {\tt SuperShift} respectively.
 
 \subsubsection{Underscripts and Overscripts  {\tt <munder>}, {\tt <mover>},
   {\tt <munderover>}}
@@ -944,7 +1065,70 @@ mmultiscripts > :not(:first-child) {
 \end{lstlisting}
 %
 
-TODO \lxAddClass{issue}
+Any layout for {\tt mmultiscripts} is acceptable as long as it follows
+the condition of the MathML 3 specification \cite{MathML3} and is consistent
+with section \ref{SubscriptsSuperscripts} for {\tt mmultiscripts}
+contructions that are equivalent to {\tt msubsup}. Here is a possible algorithm
+that is represented on figure \ref{MmultiscriptsBoxModel}.
+\begin{enumerate}
+\item Determine the vertical shifts for each subscript/superscript pair
+  and use the maximum values for all the scripts.
+\item For the horizontal layout of postscripts, use the trailing edge of the
+  base or of previous pair as the leading edge of the current pair.
+  Apply the same italic corrections for all these postscripts.
+\item For the horizontal layout of prescripts, use the leading edge of the
+  base or of next pair as the trailing edge of the current pair. Do not apply
+  any italic correction for prescripts.
+\end{enumerate}
+
+\begin{figure}
+\centering
+  \begin{tikzpicture}[yscale=-.75,xscale=.75]
+
+  \fill[blue!10](-15.5,3.75) rectangle (20.5,-3.75);
+
+  \draw[dashed,blue](-16,4) rectangle(21,-4)
+  (-16,0)--(21,0);
+
+  \MathMLBox{0}{0}{1}{1}{red};
+
+  \MathMLBox{5}{-3}{1.5}{.5}{green};
+  \draw[<->] (12.5,-3) -- (13,-3);
+
+  \MathMLBox{5}{3}{1}{.5}{green};
+  \draw[<->] (10,3) -- (10.5,3);
+
+  \begin{scope}[shift={(8,0)}]
+  \MathMLBox{5}{-3}{1.5}{.5}{green};
+  \draw[<->] (12.5,-3) -- (13,-3);
+
+  \MathMLBox{5}{3}{1}{.5}{green};
+  \draw[<->] (10,3) -- (10.5,3);
+  \end{scope}
+
+  \begin{scope}[shift={(-12.5,0)}]
+  \MathMLBox{5}{-3}{1.5}{.5}{green};
+  \draw[<->] (4.5,-3) -- (5,-3);
+
+  \begin{scope}[shift={(2.5,0)}]
+  \MathMLBox{5}{3}{1}{.5}{green};
+  \draw[<->] (4.5,3) -- (5,3);
+  \end{scope}
+  \end{scope}
+
+  \begin{scope}[shift={(-20.5,0)}]
+  \MathMLBox{5}{-3}{1.5}{.5}{green};
+  \draw[<->] (4.5,-3) -- (5,-3);
+
+  \begin{scope}[shift={(2.5,0)}]
+  \MathMLBox{5}{3}{1}{.5}{green};
+  \draw[<->] (4.5,3) -- (5,3);
+  \end{scope}
+  \end{scope}
+
+\end{tikzpicture}
+\label{MmultiscriptsBoxModel}
+\end{figure}
 
 \subsection{Tabular Math}\label{TabularMath}
 
