@@ -1264,16 +1264,14 @@ commutative diagrams, block matrices and so on.
 
 In the present specification, we restrict ourselves to a minimal implementation
 compatible with HTML tables. First the {\tt mtable} element must be treated as
-HTML table and by \cite{MathML3}, {\tt mtable} must accept a displaystyle
-attribute with default value {\tt false}. To implement that, one may rely on
-the following rules for the user agent stylesheet as
+a HTML table and by \cite{MathML3}, {\tt mtable} must accept a
+{\tt displaystyle} attribute with default value {\tt false}. To implement that,
+one may rely on the following rules for the user agent stylesheet as
 suggested in section \ref{UAStylesheet}:
 %
 \begin{lstlisting}
   mtable {
     display: inline-table;
-    border-collapse: separate;
-    border-spacing: 0;
     mathml-math-style: inline;
   }
   mtable[displaystyle="true"] {
@@ -1316,10 +1314,11 @@ mlabeledtr > mtd:first-child {
 \end{lstlisting}
 %
 
-Finally, the {\tt mtd} elements must be treated as HTML table cell.
+Finally, the {\tt mtd} elements must be treated as a HTML table cell.
 The default value of {\tt rowalign} must be {\tt baseline} and
-the default value of {\tt colulmnalign} must be {\tt center}. This can be
-achieved with the following CSS:
+the default value of {\tt colulmnalign} must be {\tt center}.
+User agents may also try to approximate the default {\tt rowspacing} and
+{\tt columnspacing} between cells. This can be achieved with the following CSS:
 
 %
 \begin{lstlisting}
@@ -1327,19 +1326,17 @@ mtd {
   display: table-cell;
   vertical-align: inherit;
   text-align: center;
+  padding: 0.5ex 0.4em;
 }
 \end{lstlisting}
 %
 
 The {\tt mtd} element must also support the {\tt columnspan} (sic) and
-{\tt rowspan} attributes. This can be implemented the same as
+{\tt rowspan} attributes. This can be implemented the same way as
 the HTML {\tt colspan} and {\tt rowspan} attributes.
 
 The layout for other tabular elements and attributes are not specified by this
 specification.
-
-Suggests some CSS to emulate the default rowspacing, columnspacing,
-framespacing? \lxAddClass{issue}
 
 \subsection{Elementary Math}
 
