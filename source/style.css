@@ -60,6 +60,12 @@ blockquote {
     border: 1px solid blue;
     padding: .5em;
 }
+.MATH {
+    background: #eef;
+}
+.ltx_listingblock {
+    color: blue;
+}
 
 /** Open issue ****************************************************************/
 .issue {

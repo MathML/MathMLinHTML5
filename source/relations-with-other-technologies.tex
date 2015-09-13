@@ -36,12 +36,12 @@ proposed in section \ref{semantics}.
 
 \subsubsection{MathML}
 
-All MathML elements accepts the {\tt id}, {\tt class} and {\tt style} attributes
-\cite{MathML3}.
-They must be interpreted as described in section 3.2.5 of the
-HTML5 specification \cite{HTML5} and in particular to specify a unique
-identifier (to identify elements in links and scripting), affect CSS selectors
-and {\tt getElementsByClassName()} and enable authors to do inline styling.
+All MathML elements accept the {\tt id}, {\tt class} and {\tt style} attributes
+\cite{MathML3}. They must be interpreted as described in section 3.2.5 of the
+HTML5 specification \cite{HTML5} and in particular they specify a unique
+identifier (to identify elements in links and scripting), affect
+CSS selectors and {\tt getElementsByClassName()} and enable authors to do
+inline styling.
 
 MathML 3 allows to use the {\tt href} attribute on any MathML element
 \cite{MathML3}. In the present specification, it is only required to implement
@@ -56,7 +56,7 @@ mrow[href] {
 \end{lstlisting}
 
 The toplevel {\tt math} element accepts the {\tt altimg}, {\tt altimg-width},
-{\tt altimg-height}, {\tt altimg-valign} and {\tt alttext} attributes on it.
+{\tt altimg-height}, {\tt altimg-valign} and {\tt alttext} attributes.
 These attributes allow to specify fallback content and may just be ignored.
 User agents that do not fully implement this specification may decide to
 render this fallback content in some situation e.g. when they are specified or
@@ -66,12 +66,32 @@ value of {\tt altimg} as an {\tt src} attribute, the value of
 {\tt alt} as a {\tt alttext} attribute, the value of {\tt altimg-width} as
 the CSS {\tt width} property, the value of {\tt altimg-height} as
 the CSS {\tt height} property and the value of {\tt altimg-valign} as
-the CSS {\tt vertical-align} property \cite{HTML5} \cite{CSS2}.
+the CSS {\tt vertical-align} property \cite{HTML5} \cite{CSS2}. Here is a
+partial implementation using the {\tt attr()} function of \cite{CSS3Values}:
+%
+\begin{lstlisting}
+math {
+  display: inline;
+}
+math[display="block"] {
+  display: block;
+  text-align: center;
+}
+math {
+  background-image: attr(altimg url);
+  width: attr(altimg-width length);
+  height: attr(altimg-height length);
+  vertical-align: attr(altimg-valign length);
+}
+math > * {
+  display: none;
+}
+\end{lstlisting}
 
 The toplevel {\tt math} element also accepts the {\tt display} attribute,
 {\tt mathcolor}, {\tt mathbackground} attributes as well as other attributes
-from the {\tt mstyle} element. These attributes must be supported and
-implementation can be achieved using specific rules in the User Agent Stylesheet
+from the {\tt mstyle} element. These attributes must be supported and this
+can be achieved using specific rules in the User Agent Stylesheet
 as described in section \ref{UAStylesheet}.
 
 In general MathML elements or attributes that are not mentioned in this
@@ -83,38 +103,49 @@ Content Markup descripted in chapter 4 of the MathML 3 specification
 
 \subsubsection{Open Font Format}
 
-User agents must be able to perfom complex text layout \cite{CTL} using
-fonts under the Open Font Format \cite{OpenFontFormat3}. In particular, they
-must implement bidirectional rendering and shaping of Arabic scripts.
-User agents should be able to render some graphical outlines (e.g. fraction
-or top radical bars) the same way as normal text and must be able to apply
-{\tt visibility} and {\tt color} CSS properties to them. They may also
-support similar CSS properties for text such as like {\tt text-shadow} or
+Because math fonts generally contain very tall glyphs such as big integrals,
+using typographic metrics is important to avoid excessive line spacing. This
+behavior is specified in math fonts using the USE\_TYPO\_METRICS flag from the
+OS/2 table \cite{OpenFontFormat3} and user agents must honor that flag.
+
+Mathematical formulas can be viewed as an extension of standard text layout
+and so user agents must already support the latter. They must be able to perfom
+complex text layout \cite{CTL} using fonts under the Open Font Format
+\cite{OpenFontFormat3}. In particular, they must implement bidirectional
+rendering and shaping of Arabic scripts.
+
+Mathematical formulas may mix standard text with other graphical outlines
+(e.g. fraction or top radical bars). For consistency, these outlines should
+be rendered the same way as normal text. In particular, user agents must be
+able to apply {\tt visibility} and {\tt color} CSS properties to them. They may
+also support similar CSS properties for text such as like {\tt text-shadow} or
 {\tt opacity}.
 
-User agents must render the text within MathML token elements with the
-{\tt math} script tag \cite{OpenFontFormat3}. When determining the
-text metrics, they must honor the USE\_TYPO\_METRICS flag from the OS/2 table
-\cite{OpenFontFormat3}.
-They must support glyph selections via the OpenType font
-features {\tt ssty} (Script Style), {\tt flac}
-(Flattened Accents over Capitals), {\tt dtls} (Dotless Forms)
+Good mathematical rendering requires use of non-Unicode glyphs. Mathematical
+fonts may only provide these glyphs when the {\tt math\lxAddClass{MATH}}
+script tag is enabled and so user agents must ensure that the text within
+MathML token
+elements is rendered with that script tag. They must also support glyph
+selections via the OpenType font features
+{\tt ssty\lxAddClass{MATH}} (Script Style), {\tt flac\lxAddClass{MATH}}
+(Flattened Accents over Capitals), {\tt dtls\lxAddClass{MATH}} (Dotless Forms)
 and {\tt rtlm} (Right-to-left mirrored forms) \cite{OpenFontFormat3}.
-
-User agents may also support the CSS {\tt font-variant-alternates} property
-and corresponding OpenType font features \cite{CSS3Font} \cite{OpenFontFormat3}.
-Typically this is used to provide both Chancery and Spencerian style for
-the Unicode MATHEMATICAL SCRIPT characters.
+At the time of writing, Unicode does not distinguish betwen Chancery and
+Spencerian style for the Unicode MATHEMATICAL SCRIPT characters. Some
+mathematical fonts rely on {\tt salt} or {\tt ssXY} properties to provide
+both styles. User agents may support the CSS {\tt font-variant-alternates}
+property and corresponding OpenType font features to enable page authors
+to get access to these styles \cite{CSS3Font} \cite{OpenFontFormat3}.
 
 User agents must be able to read information from the
 OpenType MATH table \cite{OpenFontFormat3}.
-In particular they must be able to read the values from the MathConstants
-table. They must also be able to use the MathVariants subtable to solve the
-following problem: given a particular default glyph shape and a
+In particular they must be able to read the values from the
+{\tt MathConstants\lxAddClass{MATH}} table.
+They must also be able to use the {\tt MathVariants\lxAddClass{MATH}} subtable
+to solve the following problem: given a particular default glyph shape and a
 certain width or height, find a variant shape glyph (or a construct created by
 putting several glyphs together) that has the required measurement.
-
-Add reference to section about {\tt mo} operators. \lxAddClass{issue}
+For more details, see section \ref{Operators}.
 
 \subsubsection{LaTeX}\label{LaTeX}
 
@@ -142,7 +173,16 @@ However, it is set to true in the following children:
   notation.
 \end{enumerate}
 
-Discuss spacing https://dxr.mozilla.org/mozilla-central/source/layout/mathml/nsMathMLContainerFrame.cpp\#1076 \lxAddClass{issue}
+To implement math spacing, the TeXBook defines eight basic types
+({\tt Ord} for ordinary atoms, {\tt Op} for large operators,
+{\tt Bin} for binary operations, {\tt Rel} for relations,
+{\tt Open} for opening fences, {\tt Close} for closing fences,
+{\tt Punct} for punctuations and {\tt Inner} for a delimited subformula) and
+define an inter space for each pair of such types. In the present specification,
+we only follow the spacing algorithm of MathML 3: by default the inter space
+is always zero and the spacing is produced by spacing elements like
+{\tt mspace}, {\tt mphantom} or {\tt mpadded} or by the leading and trailing
+space around embellished operators.
 
 \subsection{CSS Styling}
 
@@ -160,19 +200,86 @@ We assume that at least the following properties are supported:
 \item {\tt background} and {\tt color}
 \item {\tt visibility}
 \end{enumerate}
-%
-In addition, this specification introduces new non-animatable CSS properties:
+
+In addition, this specification introduces new CSS properties that must be
+supported by user agents unless they are able to reproduce equivalent rendering
+behavior described in the present specification:
+
+\begin{itemize}
+
+\item \begin{tabular}{ll}\label{CSSScriptMathStyle}
+  \emph{Name:} & {\tt 'mathml-math-style'} \\
+  \emph{Value:} & display | inline \\
+  \emph{Initial:} & inline \\
+  \emph{Applies to:} & All elements \\
+  \emph{Inherited:} & yes \\
+  \emph{Percentages:} & N/A \\
+  \emph{Media:} & visual \\
+  \emph{Computed value:} & as specified \\
+  \emph{Animatable:} & no \\
+  \emph{Description:} & ...
+\end{tabular}
+
+\item \begin{tabular}{ll}\label{CSSScriptMathVariant}
+  \emph{Name:} & {\tt 'mathml-math-variant'} \\
+  \emph{Value:} & {\tt "none" | "normal" | "bold" | "italic" | "bold-italic" |
+  "double-struck" | "bold-fraktur" | "script" | "bold-script" | "fraktur" |
+  "sans-serif" | "bold-sans-serif" | "sans-serif-italic" |
+  "sans-serif-bold-italic" | "monospace" | "initial" | "tailed" | "looped" |
+  "stretched"} \\
+  \emph{Initial:} & none \\
+  \emph{Applies to:} & All elements \\
+  \emph{Inherited:} & yes \\
+  \emph{Percentages:} & N/A \\
+  \emph{Media:} & visual \\
+  \emph{Computed value:} & as specified \\
+  \emph{Animatable:} & no \\
+  \emph{Description:} & ...
+\end{tabular}
+
+\item \begin{tabular}{ll}\label{CSSScriptLevel}
+  \emph{Name:} & {\tt 'mathml-script-level'} \\
+  \emph{Value:} & {\tt \textless integer\textgreater |
+  increment | increment-twice | increment-if-inline} \\
+  \emph{Initial:} & 0 \\
+  \emph{Applies to:} & All elements \\
+  \emph{Inherited:} & yes \\
+  \emph{Percentages:} & N/A \\
+  \emph{Media:} & visual \\
+  \emph{Computed value:} & as specified \\
+  \emph{Animatable:} & no \\
+  \emph{Description:} & ...
+\end{tabular}
+
+\item \begin{tabular}{ll}\label{CSSScriptSizeMultiplier}
+  \emph{Name:} & {\tt 'mathml-script-size-multiplier'} \\
+  \emph{Value:} & \textless number\textgreater \\
+  \emph{Initial:} & 0 \\
+  \emph{Applies to:} & All elements \\
+  \emph{Inherited:} & yes \\
+  \emph{Percentages:} & N/A \\
+  \emph{Media:} & visual \\
+  \emph{Computed value:} & as specified \\
+  \emph{Animatable:} & no \\
+  \emph{Description:} & ...
+\end{tabular}
+
+\item \begin{tabular}{ll}\label{CSSScriptSizeMinSize}
+  \emph{Name:} & {\tt 'mathml-script-min-size'} \\
+  \emph{Value:} & \textless number\textgreater \\
+  \emph{Initial:} & 0 \\
+  \emph{Applies to:} & All elements \\
+  \emph{Inherited:} & yes \\
+  \emph{Percentages:} & N/A \\
+  \emph{Media:} & visual \\
+  \emph{Computed value:} & as specified \\
+  \emph{Animatable:} & no \\
+  \emph{Description:} & ...
+\end{tabular}
+
+\end{itemize}
 
 Add reference / explanation about these new properties \lxAddClass{issue}
-
-%
-\begin{enumerate}
-\item {\tt mathml-script-level}
-\item {\tt mathml-script-size-multiplier}
-\item {\tt mathml-script-min-size}
-\item {\tt mathml-math-variant}
-\item {\tt mathml-math-style}
-\end{enumerate}
 
 The following MathML attributes must be mapped to CSS properties:
 %
@@ -223,10 +330,15 @@ mechanism to try and interpret this {\tt serif} value on the {\tt math} element
 as a font with an OpenType MATH table.
 
 Below is an example on a stylesheet to style MathML elements on which the
-User Agents may rely.
-
-Blink does not allow universal selectors in user agent
-stylesheet. Should we use explicit tag names? \lxAddClass{issue}
+User Agents may rely. Unfortunately, some rendering engines do not allow
+universal selectors in their user agent stylesheets and so rules must be
+expanded to list all possible MathML elements described in the present
+specification. For example {\tt mfrac > *} can be converted into
+{\tt mfrac > mi, mfrac > mn, mfrac > mo, mfrac > mtext, mfrac > mspace,
+mfrac > ms, mfrac > mrow, mfrac > mfrac, mfrac > msqrt, mfrac > mroot,
+mfrac > mstyle, mfrac > merror, mfrac > mpadded, mfrac > mphantom,
+mfrac > menclose, mfrac > msub, mfrac > msubsup, mfrac > munder, mfrac > mover,
+mfrac > munderover, mfrac > mmultiscripts, mfrac > mtable, mfrac > maction}.
 
 \begin{lstlisting}
 @namespace url(http://www.w3.org/1998/Math/MathML);
@@ -325,18 +437,18 @@ mstyle[displaystyle="true"] {
   mathml-math-style: display;
 }
 mfrac > * {
-  mathml-script-level: auto;
+  mathml-script-level: increment-if-inline;
   mathml-math-style: inline;
 }
 mroot > :not(:first-child) {
-  mathml-script-level: +2;
+  mathml-script-level: increment-twice;
   mathml-math-style: inline;
 }
 msub > :not(:first-child),
 msup > :not(:first-child),
 msubsup > :not(:first-child),
 mmultiscripts > :not(:first-child) {
-  mathml-script-level: +1;
+  mathml-script-level: increment;
   mathml-math-style: inline;
 }
 munder > :not(:first-child),

@@ -13,6 +13,7 @@ all: html
 
 clean:
 	rm -f *~; rm -f */*~; rm -f */*/*~
+	rm -f */*.aux */*.log */*.out */*.pdf */*.toc
 	cd output
 
 distclean: clean

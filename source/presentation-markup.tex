@@ -75,6 +75,10 @@ change (e.g. mrow) \lxAddClass{issue}
 
 TODO \lxAddClass{issue}
 
+\subsection{Operator, Fence, Separator or Accent {\tt <mo>}}\label{Operators}
+
+TODO \lxAddClass{issue}
+
 \subsection{General Layout Schemata}
 
 \subsubsection{Horizontally Group Sub-Expressions {\tt <mrow>}}
@@ -89,12 +93,10 @@ The MathML specification describes {\tt mfrac} as follows \cite{MathML3}:
 The {\tt mfrac} element is used for fractions. It can also be used to mark up
 fraction-like objects such as binomial coefficients and Legendre symbols.
 The syntax for {\tt mfrac} is
-%
-\begin{lstlisting}
-  <mfrac> numerator denominator </mfrac>
-\end{lstlisting}
-%
-The {\tt mfrac} element sets {\tt displaystyle} to "false", or if it was
+
+  {\tt <mfrac> numerator denominator </mfrac>}
+
+The {\tt mfrac} element sets {\tt displaystyle} to {\tt "false"}, or if it was
 already false increments {\tt scriptlevel} by 1, within numerator and
 denominator.
 \end{quote}
@@ -105,12 +107,13 @@ following style in the user agent stylesheet as suggested in section
 %
 \begin{lstlisting}
   mfrac > * {
-    mathml-script-level: auto;
+    mathml-script-level: increment-if-inline;
     mathml-math-style: inline;
   }
 \end{lstlisting}
 %
-The default line thickness is given by {\tt FractionRuleThickness}
+The default line thickness is given by
+{\tt FractionRuleThickness\lxAddClass{MATH}}
 Use the {\tt linethickness} attribute \cite{MathML3} to determine the
 actual thickness of the fraction bar. A percent or unitless length is
 interpreted as a multiple of the default rule thickness and
@@ -125,16 +128,18 @@ The width is given by the maximum width of the
 numerator and denominator and the numerator and denominator are horizontally
 centered. A fraction bar with the actual thickness is drawn centered on the
 axis height. The numerator and denominator are shifted
-up and down using the values {\tt FractionNumeratorShiftUp},
-{\tt FractionDenominatorShiftDown} in inline style and
-{\tt FractionNumeratorDisplayStyleShiftUp},
-{\tt FractionDenominatorDisplayStyleShiftDown} in display style.
+up and down using the values {\tt FractionNumeratorShiftUp\lxAddClass{MATH}},
+{\tt FractionDenominatorShiftDown\lxAddClass{MATH}} in inline style and
+{\tt FractionNumeratorDisplayStyleShiftUp\lxAddClass{MATH}},
+{\tt FractionDenominatorDisplayStyleShiftDown\lxAddClass{MATH}}
+in display style.
 If necessary, these shift values are increased to ensure that the gaps between
 the numerator/denominator and fraction bar satisfy the minimal values provided
-by {\tt FractionDenominatorGapMin} and
-{\tt FractionNumeratorGapMin} in inline style and
-{\tt FractionDenominatorDisplayStyleGapMin} and
-{\tt FractionNumeratorDisplayStyleGapMin} in display style.
+by {\tt FractionDenominatorGapMin\lxAddClass{MATH}} and
+{\tt FractionNumeratorGapMin\lxAddClass{MATH}} in inline style and
+{\tt FractionDenominatorDisplayStyleGapMin\lxAddClass{MATH}} and
+{\tt FractionNumeratorDisplayStyleGapMin\lxAddClass{MATH}}
+in display style.
 
 \begin{figure}
 \centering
@@ -164,14 +169,14 @@ If the actual line thickness is zero,
 the {\tt mfrac} element is instead laid out as
 shown on figure \ref{StackBoxModel}. The gap between the top and bottom boxes
 is equally split around the axis height. The relevant shift values are now
-{\tt StackTopShiftUp},
-{\tt StackBottomShiftDown} in inline style and
-{\tt StackTopDisplayStyleShiftUp},
-{\tt StackBottomDisplayStyleShiftDown} in display style.
+{\tt StackTopShiftUp\lxAddClass{MATH}},
+{\tt StackBottomShiftDown\lxAddClass{MATH}} in inline style and
+{\tt StackTopDisplayStyleShiftUp\lxAddClass{MATH}},
+{\tt StackBottomDisplayStyleShiftDown\lxAddClass{MATH}} in display style.
 If necessary, the two shift values are increased by a same value to ensure
 the gap between the top and bottom boxes satisfy the values provided by
-by {\tt StackGapMin} in inline style and
-{\tt StackDisplayStyleGapMin} in display style.
+by {\tt StackGapMin\lxAddClass{MATH}} in inline style and
+{\tt StackDisplayStyleGapMin\lxAddClass{MATH}} in display style.
 
 \begin{figure}
 \centering
@@ -208,18 +213,18 @@ The MathML specification describes radicals as follows \cite{MathML3}:
 These elements construct radicals. The {\tt msqrt} element is used for square
 roots, while the {\tt mroot} element is used to draw radicals with indices,
 e.g. a cube root. The syntax for these elements is:
-%
-\begin{lstlisting}
-  <msqrt> base </msqrt>
-  <mroot> base index </mroot>
-\end{lstlisting}
-%
+
+{\tt
+  <msqrt> base </msqrt> \\
+  <mroot> base index </mroot>}
+
 The {\tt mroot} element requires exactly 2 arguments. However, {\tt msqrt}
 accepts a single argument, possibly being an inferred {\tt mrow} of multiple
 children.
 
 The {\tt mroot} element increments scriptlevel by 2, and sets displaystyle to
-"false", within index, but leaves both attributes unchanged within base. The
+{\tt "false"},
+within index, but leaves both attributes unchanged within base. The
 {\tt msqrt} element leaves both attributes unchanged within its argument. [...]
 
 Note that in a RTL directionality, the surd begins on the right, rather than
@@ -232,16 +237,20 @@ following style in the user agent stylesheet as suggested in section
 %
 \begin{lstlisting}
   mroot > :not(:first-child) {
-    mathml-script-level: +2;
+    mathml-script-level: increment-twice;
     mathml-math-style: inline;
   }
 \end{lstlisting}
 
-The line thickness of the overbar is given by {\tt RadicalRuleThickness}.
-The gap between the overbar and base is given by {\tt RadicalVerticalGap}
-in inline style and {\tt RadicalDisplayStyleVerticalGap} in display style.
-The ascent above the overbase is given by {\tt RadicalExtraAscender}. The
-surd is drawn by trying to vertically stretch the character U+221A SQUARE ROOT
+The line thickness of the overbar is given by
+{\tt RadicalRuleThickness\lxAddClass{MATH}}.
+The gap between the overbar and base is given by
+{\tt RadicalVerticalGap\lxAddClass{MATH}}
+in inline style and {\tt RadicalDisplayStyleVerticalGap\lxAddClass{MATH}}
+in display style.
+The ascent above the overbase is given by {\tt RadicalExtraAscender\lxAddClass{MATH}}.
+The surd is drawn by trying to vertically stretch the character
+U+221A SQUARE ROOT
 to at least the sum of the ink height of the base, the radical gap and the
 radical rule thickness. If the CSS {\tt direction} is set to right-to-left,
 then the surd is actually drawn from the glyph obtained by mirroring
@@ -291,9 +300,9 @@ The {\tt mroot} element is laid out as shown on figure \ref{RootBoxModel}.
 We start by ignoring the root index and we layout the base and surd as
 shown on figure \ref{SquareRootBoxModel} to obtain a box $B$.
 The horizontal metrics of the {\tt mroot} element are obtained by putting
-{\tt RadicalKernBeforeDegree}
+{\tt RadicalKernBeforeDegree\lxAddClass{MATH}}
 before the root index, then placing the root index, then a kerning
-of {\tt RadicalKernAfterDegree}
+of {\tt RadicalKernAfterDegree\lxAddClass{MATH}}
 after the root index and finally placing $B$. In general
 the kerning before the root index is positive while the kerning after it is
 negative,
@@ -303,7 +312,8 @@ For the vertical metrics of the {\tt mroot} element, we first take the baseline
 of $B$ as the baseline. We graduate the ink height of $B$ with a linear
 scale going from the bottom at coordinate 0 to the top at coordinate 1.
 Then the baseline of the root index will
-be vertically positioned at coordinate {\tt RadicalDegreeBottomRaisePercent}.
+be vertically positioned at coordinate
+{\tt RadicalDegreeBottomRaisePercent\lxAddClass{MATH}}.
 Finally, we take into consideration the box of the root index and $B$ to deduce
 the metrics for the whole box of the {\tt mroot} element.
 
@@ -522,7 +532,7 @@ given by the {\tt color} and {\tt visibility} CSS properties on the
 
 Based on \cite{OpenFontFormat3} \cite{TeXBook}, we use the notation $\xi_8$
 from the TeXBook to denote the default rule thickness and use $3\xi_8$ for gaps.
-We actually let $\xi_8$ be {\tt OverbarRuleThickness}.
+We actually let $\xi_8$ be {\tt OverbarRuleThickness\lxAddClass{MATH}}.
 Contrary to what is done in general, the $x$-axis direction of all notations
 except {\tt radical} are independent of the CSS {\tt direction}.
 In order to determine the metrics of the {\tt menclose} notation, we
@@ -532,8 +542,10 @@ compute each notation individually and take the union of the metrics:
 \item The {\tt left} notation is drawn by putting a vertical bar of thickness
   $\xi_8$ on the left of the content of the {\tt menclose} element.
   The length of the bar is obtained by extending the height of the content
-  with {\tt OverbarVerticalGap} plus {\tt OverbarRuleThickness} above
-  and  {\tt UnderbarVerticalGap} plus {\tt UnderbarRuleThickness} below.
+  with {\tt OverbarVerticalGap\lxAddClass{MATH}} plus
+  {\tt OverbarRuleThickness\lxAddClass{MATH}} above
+  and  {\tt UnderbarVerticalGap\lxAddClass{MATH}} plus
+  {\tt UnderbarRuleThickness\lxAddClass{MATH}} below.
   The gap between the bar and the content is $3\xi_8$.
   The logical box is obtained by adding some space of width
   $\xi_8$ on the left of the bar. See figure \ref{MencloseLeftBoxModel}.
@@ -570,12 +582,14 @@ compute each notation individually and take the union of the metrics:
   but with the vertical bar placed on the right.
 
 \item The {\tt top} notation is drawn by putting an overbar of thickness
-  {\tt OverbarRuleThickness} over the content of the {\tt menclose} element.
+  {\tt OverbarRuleThickness\lxAddClass{MATH}}
+  over the content of the {\tt menclose} element.
   The length of the bar is obtained by extending the width of the content
   with $4\xi_8$ on each side.
-  The gap between the overbar and the content is {\tt OverbarVerticalGap}.
+  The gap between the overbar and the content is
+  {\tt OverbarVerticalGap\lxAddClass{MATH}}.
   The logical box is obtained by adding some space of height
-  {\tt OverbarExtraAscender} above the bar.
+  {\tt OverbarExtraAscender\lxAddClass{MATH}} above the bar.
   See figure \ref{MencloseTopBoxModel}.
 
   \begin{figure}
@@ -603,8 +617,9 @@ compute each notation individually and take the union of the metrics:
 
 \item The {\tt bottom} notation is drawn the same as the {\tt top} notation,
   but with the vertical bar placed below the content and using parameters
-  {\tt UnderbarRuleThickness}, {\tt UnderbarVerticalGap}.
-  and {\tt UnderExtraDescender}.
+  {\tt UnderbarRuleThickness\lxAddClass{MATH}},
+  {\tt UnderbarVerticalGap\lxAddClass{MATH}}.
+  and {\tt UnderExtraDescender\lxAddClass{MATH}}.
 
 \item The {\tt box} notation is treated as equivalent to
   {\tt left right top bottom}.
@@ -778,20 +793,16 @@ follows \cite{MathML3}:
 %
 \begin{quote}
 The msub element attaches a subscript to a base using the syntax
-%
-\begin{lstlisting}
-  <msub> base subscript </msub>
-\end{lstlisting}
+
+  {\tt <msub>} base subscript {\tt </msub>}
 
 It increments {\tt scriptlevel} by 1, and sets {\tt displaystyle} to
 {\tt "false"}, within subscript, but leaves both attributes unchanged within
 base. [...]
 
 The {\tt msup} element attaches a superscript to a base using the syntax
-%
-\begin{lstlisting}
-  <msup> base superscript </msup>
-\end{lstlisting}
+
+  {\tt <msup>} base superscript {\tt </msup>}
 
 It increments {\tt scriptlevel} by 1, and sets {\tt displaystyle} to
 {\tt "false"}, within superscript, but leaves both attributes unchanged within
@@ -799,10 +810,8 @@ base. [...]
 
 The {\tt msubsup} element is used to attach both a subscript and superscript to
 a base expression.
-%
-\begin{lstlisting}
-  <msubsup> base subscript superscript </msubsup>
-\end{lstlisting}
+
+  {\tt <msubsup>} base subscript superscript {\tt </msubsup>}
 
 It increments {\tt scriptlevel} by 1, and sets {\tt displaystyle} to
 {\tt "false"}, within subscript and superscript, but leaves both attributes
@@ -818,7 +827,7 @@ following style in the user agent stylesheet:
 msub > :not(:first-child),
 msup > :not(:first-child),
 msubsup > :not(:first-child) {
-  mathml-script-level: +1;
+  mathml-script-level: increment;
   mathml-math-style: inline;
 }
 \end{lstlisting}
@@ -826,10 +835,12 @@ msubsup > :not(:first-child) {
 
 The {\tt msub} element is laid out as shown on figure \ref{MsubBoxModel}.
 The baseline is the baseline of the base and the subscript is shifted down
-by {\tt SubShift}. {\tt SubShift} is initially set to {\tt SubscriptShiftDown}
+by {\tt SubShift}. {\tt SubShift} is initially set to
+{\tt SubscriptShiftDown\lxAddClass{MATH}}
 and is increased until the shift {\tt SubTopShift} for the top of the subscript
-is at least {\tt SubscriptTopMax}. When determining
-the logical box, a space of width {\tt SpaceAfterScript} is added after
+is at least {\tt SubscriptTopMax\lxAddClass{MATH}}. When determining
+the logical box, a space of width {\tt SpaceAfterScript\lxAddClass{MATH}}
+is added after
 the subscript. By default, the leading edge of the subscript is aligned with
 the trailing edge of the base. However, if the base is an operator with
 {\tt largeop="true"} (or an embellished operator whose {\tt mo} element core
@@ -867,11 +878,14 @@ The {\tt msup} element is laid out as shown on figure \ref{MsupBoxModel}.
 The baseline is the baseline of the base and the superscript is shifted up
 by {\tt SuperShift}. If the {\tt msup} element is cramped
 (section \ref{LaTeX})
-{\tt SuperShift} is initially set to {\tt SuperscriptShiftUpCramped} otherwise
-it is set to {\tt SuperscriptShiftUp}.
+{\tt SuperShift} is initially set to
+{\tt SuperscriptShiftUpCramped\lxAddClass{MATH}} otherwise
+it is set to {\tt SuperscriptShiftUp\lxAddClass{MATH}}.
 {\tt SuperShift} is increased until the shift for the bottom of the superscript
-{\tt SuperBottomShift} is at least {\tt SuperscriptBottomMin}. When determining
-the logical box, a space of width {\tt SpaceAfterScript} is added after
+{\tt SuperBottomShift} is at least
+{\tt SuperscriptBottomMin\lxAddClass{MATH}}. When determining
+the logical box, a space of width {\tt SpaceAfterScript\lxAddClass{MATH}}
+is added after
 the superscript. By default, the leading edge of the superscript is aligned with
 the trailing edge of the base and shifted forward by the italic correction
 of the base, except if the base is an operator with
@@ -907,18 +921,23 @@ has {\tt largeop="true"}).
 The {\tt msubsup} element is laid out as shown on figure \ref{MsubsupBoxModel}.
 The baseline is the baseline of the base, the subscript is shifted down
 by {\tt SubShift} and the superscript is shifted up by {\tt SuperShift}.
-{\tt SubShift} is initially set to {\tt SubscriptShiftDown}.
+{\tt SubShift} is initially set to {\tt SubscriptShiftDown\lxAddClass{MATH}}.
 If the {\tt msubsup} element is cramped (section \ref{LaTeX}) then
-{\tt SuperShift} must be at least {\tt SuperscriptShiftUpCramped} otherwise
-it must be at least {\tt SuperscriptShiftUp} (see section \ref{LaTeX}).
+{\tt SuperShift} must be at least
+{\tt SuperscriptShiftUpCramped\lxAddClass{MATH}} otherwise
+it must be at least {\tt SuperscriptShiftUp\lxAddClass{MATH}}
+(see section \ref{LaTeX}).
 {\tt SupShift} is increased until the shift for the bottom of the superscript
-{\tt SupBottomShift} is at least {\tt SuperscriptBottomMin}.
+{\tt SupBottomShift} is at least {\tt SuperscriptBottomMin\lxAddClass{MATH}}.
 We then increase the gap {\tt SubSuperGap} between the bottom of the superscript
-and the top of the subscript until it is at least {\tt SubSuperscriptGapMin}:
+and the top of the subscript until it is at least
+{\tt SubSuperscriptGapMin\lxAddClass{MATH}}:
 This is first done by continuing to shift the superscript up as long as the
-{\tt SupBottomShift} does not exceed {\tt SuperscriptBottomMaxWithSubscript}
+{\tt SupBottomShift} does not exceed
+{\tt SuperscriptBottomMaxWithSubscript\lxAddClass{MATH}}
 and next by continuing to shift the subscript down. When determining
-the logical box, a space of width {\tt SpaceAfterScript} is added after
+the logical box, a space of width {\tt SpaceAfterScript\lxAddClass{MATH}}
+is added after
 each script. By default the leading edges of the scripts are aligned with
 the trailing edge and either the superscript is shifted forward by the italic
 correction of the base. However, if the base is an operator with
@@ -973,10 +992,8 @@ follows \cite{MathML3}:
 \begin{quote}
 The {\tt munder} element attaches an accent or limit placed under a base using
 the syntax
-%
-\begin{lstlisting}
-<munder> base underscript </munder>
-\end{lstlisting}
+
+  {\tt <munder>} base underscript {\tt </munder>}
 
 It always sets {\tt displaystyle} to {\tt "false"} within the underscript, but
 increments {\tt scriptlevel} by 1 only when {\tt accentunder} is
@@ -989,13 +1006,12 @@ In this case, the {\tt accentunder} attribute is ignored. [...]
 
 The {\tt mover} element attaches an accent or limit placed over a base using
 the syntax
-%
-\begin{lstlisting}
-<mover> base overscript </mover>
-\end{lstlisting}
+
+  {\tt <mover> base overscript </mover>}
 
 It always sets {\tt displaystyle} to {\tt "false"} within overscript, but
-increments {\tt scriptlevel} by 1 only when accent is "false". Within base, it
+increments {\tt scriptlevel} by 1 only when accent is {\tt "false"}.
+Within base, it
 always leaves both attributes unchanged.[...]
 
 If base is an operator with {\tt movablelimits="true"} (or an embellished
@@ -1005,10 +1021,8 @@ In this case, the {\tt accent} attribute is ignored.[...]
 
 The {\tt munderover} element attaches accents or limits placed both over and
 under a base using the syntax
-%
-\begin{lstlisting}
-<munderover> base underscript overscript </munderover>
-\end{lstlisting}
+
+  {\tt <munderover> base underscript overscript </munderover>}
 
 It always sets {\tt displaystyle} to {\tt "false"} within underscript and
 overscript, but increments {\tt scriptlevel} by 1 only when {\tt accentunder}
@@ -1063,31 +1077,39 @@ We distinguish three cases:
 \item If the base is an operator with {\tt largeop="true"}
   (or an embellished operator whose {\tt mo} element core has
   {\tt largeop="true"}) then ensure that {\tt OverGap} is at least
-  {\tt UpperLimitGapMin}, that {\tt OverShift} is at least
-  {\tt UpperLimitBaselineRiseMin} that {\tt UnderGap} is at least
-  {\tt LowerLimitGapMin}, that {\tt UnderShift} is at least
-  {\tt LowerLimitBaselineDropMin}. {\tt OverExtraAscender} and
+  {\tt UpperLimitGapMin\lxAddClass{MATH}}, that {\tt OverShift} is at least
+  {\tt UpperLimitBaselineRiseMin\lxAddClass{MATH}} that {\tt UnderGap} is at
+  least
+  {\tt LowerLimitGapMin\lxAddClass{MATH}}, that {\tt UnderShift} is at least
+  {\tt LowerLimitBaselineDropMin\lxAddClass{MATH}}.
+  {\tt OverExtraAscender} and
   {\tt UnderExtraAscender} are zero. The
   underscript is shifted backward by half the italic correction of the base.
   The overscript is shifted forward by half the italic correction of the base.
 \item If the base is an operator with {\tt stretchy="true"}
   (or an embellished operator whose {\tt mo} element core has
   {\tt stretchy="true"}). Then ensure that {\tt OverGap} is at least
-  {\tt StretchStackGapBelowMin}, that {\tt OverShift} is at least
-  {\tt StretchStackTopShiftUp} that {\tt UnderGap} is at least
-  {\tt StretchStackGapAboveMin}, that {\tt UnderShift} is at least
-  {\tt StretchStackBottomShiftDown}. {\tt OverExtraAscender} and
+  {\tt StretchStackGapBelowMin\lxAddClass{MATH}}, that {\tt OverShift} is at
+  least
+  {\tt StretchStackTopShiftUp\lxAddClass{MATH}} that {\tt UnderGap} is at least
+  {\tt StretchStackGapAboveMin\lxAddClass{MATH}},
+  that {\tt UnderShift} is at least
+  {\tt StretchStackBottomShiftDown\lxAddClass{MATH}}.
+  {\tt OverExtraAscender} and
   {\tt UnderExtraAscender} are zero.
 \item In other cases we proceed as follows.
-  We first ensure that {\tt UnderGap} is at least  {\tt UnderbarVerticalGap}.
+  We first ensure that {\tt UnderGap} is at least
+  {\tt UnderbarVerticalGap\lxAddClass{MATH}}.
   If overscript is an accent
-  and the ink ascent of the base does not exceed {\tt AccentBaseHeight}
+  and the ink ascent of the base does not exceed
+  {\tt AccentBaseHeight\lxAddClass{MATH}}
   then we just align the baseline of the overscript with the baseline
   of the base. Otherwise, we ensure that {\tt OverGap} is at least
-  {\tt OverbarVerticalGap} Finally,
+  {\tt OverbarVerticalGap\lxAddClass{MATH}}. Finally,
   {\tt OverExtraAscender} and
-  {\tt OverExtraAscender} are respectively set to {\tt OverbarExtraAscender}
-  and {\tt UnderExtraAscender}.
+  {\tt OverExtraAscender} are respectively set to
+  {\tt OverbarExtraAscender\lxAddClass{MATH}}
+  and {\tt UnderExtraAscender\lxAddClass{MATH}}.
 \end{enumerate}
 
 \begin{figure}
@@ -1143,14 +1165,12 @@ follows \cite{MathML3}:
 \begin{quote}
 Presubscripts and tensor notations are represented by a single element,
 {\tt mmultiscripts}, using the syntax:
-%
-\begin{lstlisting}
-<mmultiscripts>
-    base
-     (subscript superscript)*
-     [ <mprescripts/> (presubscript presuperscript)* ]
-</mmultiscripts>
-\end{lstlisting}
+
+{\tt <mmultiscripts> \\
+  base \\
+  (subscript superscript)* \\
+  {[} <mprescripts/> (presubscript presuperscript)* {]} \\
+</mmultiscripts>}
 
 This element allows the representation of any number of vertically-aligned
 pairs of subscripts and superscripts, attached to one base expression. It
@@ -1171,7 +1191,7 @@ following style in the user agent stylesheet as suggested in section
 %
 \begin{lstlisting}
 mmultiscripts > :not(:first-child) {
-  mathml-script-level: +1;
+  mathml-script-level: increment;
   mathml-math-style: inline;
 }
 \end{lstlisting}

@@ -13,6 +13,9 @@
 \usepackage{tikz}
 \usetikzlibrary{fit}
 
+% Define macros to avoid error when not using LaTeXML.
+\providecommand{\lxAddClass}{}
+
 \newcommand{\MathMLBox}[5]{
   \begin{scope}[shift={(#1,#2)},xscale=#3,yscale=#4,color=#5]
     \fill[color=#5!10]
