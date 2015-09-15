@@ -2,7 +2,7 @@
 
 \subsection{Introduction}
 
-\subsubsection{Box Model}
+\subsubsection{Box Model}\label{BoxModel}
 
 User agents must also follow the rules described in section 4.7.14
 Embedded content, MathML of \cite{HTML5}, in particular the equivalence with
@@ -40,7 +40,8 @@ Each MathML box has the following parameters:
   \MathMLBox{6}{2}{1.5}{1}{green}
   \MathMLBoxMetrics{6}{2}{1.5}{1}{green}{2}
 \end{tikzpicture}
-\label{MathMLBoxModel}
+\caption{Generic Box Model for MathML elements}
+\label{fig:MathMLBoxModel}
 \end{figure}
 
 For MathML element containing only text nodes or foreign elements, we assume
@@ -65,23 +66,305 @@ Note that the schemas in this specification are drawn assuming left-to-right
 directionality. If the CSS {\tt direction} is set to right-to-left, then the
 elements should be layout by making the $x$-axis pointing from right-to-left.
 
-Add italic correction ; how it is preserved when the bounding box does not
-change (e.g. mrow) \lxAddClass{issue}
+The {\tt MathItalicsCorrectionInfo\lxAddClass{MATH}} table contains the italic
+correction of some glyphs, which provides a measure of how slanted the
+glyphs are (see figure \ref{fig:ItalicCorrection}). The
+{\tt MathTopAccentAttachment\lxAddClass{MATH}} table also contains a reference
+points that is used for the horizontal positioning of glyphs as an accent
+(see figure \ref{fig:TopAccentAttachment}). In later sections, we
+generalize this by claiming that all MathML boxes have italic correction
+and top accent attachment values. The values for glyphs are used to try and
+extend to token elements or to special boxes that do not change child metrics.
+Otherwise fallback values are used: 0 for italic correction and half
+the width of the box for top accent attachment.
 
-Add top accent attachment how it is preserved when the bounding box does not
-change (e.g. mrow) \lxAddClass{issue}
+\begin{figure}
+\centering
+  \begin{tikzpicture}[yscale=-1]
+
+    \begin{scope}[xscale=.1,yscale=.1]
+    \fill[black] (1,40) .. controls (0,38) and (3,36) .. (4,38) .. controls (4,38) and (4,42) .. (6,40) .. controls (8,38) and (8,34) .. (9,32) .. controls (11,26) and (12,20) .. (14,15) .. controls (13,13) and (9,14) .. (12,12) .. controls (13,11) and (15,10) .. (16,7) .. controls (17,4) and (21,0) .. (25,1) .. controls (27,1) and (28,3) .. (27,5) .. controls (25,7) and (25,2) .. (23,2) .. controls (21,3) and (20,5) .. (20,7) .. controls (19,8) and (18,11) .. (20,12) .. controls (22,12) and (22,14) .. (20,14) .. controls (18,14) and (17,16) .. (17,18) .. controls (15,25) and (13,32) .. (10,38) .. controls (8,41) and (5,42) .. (2,41) .. controls (1,41) and (1,40) .. (1,40) -- cycle;
+    \draw[black] (10,0) -- (30,0) -- (20,42) -- (0,42) -- cycle;
+    \draw[red,->] (20,42) node[below]{Italic Correction} -- (30,42);
+    \end{scope}
+
+    \begin{scope}[shift={(0,5)},xscale=.1,yscale=.1]
+    \fill[black] (3,110) .. controls (1,104) and (9,106) .. (8,108) .. controls (13,103) and (13,95) .. (15,88) .. controls (22,62) and (28,35) .. (36,9) .. controls (37,3) and (52,-1) .. (48,7) .. controls (44,9) and (44,1) .. (41,7) .. controls (38,15) and (37,23) .. (34,31) .. controls (28,55) and (23,79) .. (16,102) .. controls (14,106) and (8,114) .. (3,110) -- cycle;
+    \draw[black] (30,0) -- (52,0) -- (22,112) -- (0,112) -- cycle;
+    \draw[red,->] (22,112) node[below]{Italic Correction} -- (52,112);
+    \end{scope}
+\end{tikzpicture}
+\caption{Examples of italic correction for italic f and large integral}
+\label{fig:ItalicCorrection}
+\end{figure}
+
+\begin{figure}
+\centering
+  \begin{tikzpicture}[yscale=-1]
+    \begin{scope}[xscale=.1,yscale=.1]
+    \fill[black]
+    (5,7) .. controls (8,5) and (11,0) .. (16,2) .. controls (20,4) and (22,8) .. (25,11) .. controls (28,14) and (23,13) .. (22,11) .. controls (19,10) and (17,6) .. (13,6) .. controls (9,8) and (7,12) .. (3,13) .. controls (0,15) and (3,10) .. (4,9) .. controls (5,8) and (5,8) .. (5,7) -- cycle;
+    \draw[black] (0,0) rectangle (28,40);
+    \draw[black,dashed](14,0) -- (14,40);
+    \draw[red,->] (0,30) node[below]{Top Accent Attachment} -- (14,30);
+    \end{scope}
+  \end{tikzpicture}
+\caption{Example of top accent attachment for a circumflex accent}
+\label{fig:TopAccentAttachment}
+\end{figure}
+
+The present specification assumes that $W,w,a,b,A,B$, italic correction
+and top accent attachment are nonnegative values. If computations result
+in negative values, then they must be interpreted as being zero.
+Note that some MathML elements such as {\tt mspace} or {\tt mpadded} may set box
+dimensions to negative values.
 
 \subsection{Token Elements}
 
-TODO \lxAddClass{issue}
+\subsubsection{Using images to represent symbols {\tt <mglyph/>}}
 
-\subsection{Operator, Fence, Separator or Accent {\tt <mo>}}\label{Operators}
+The MathML specification describes {\tt mglyph} as follows \cite{MathML3}:
+%
+\begin{quote}
+The mglyph element provides a mechanism for displaying images to represent
+non-standard symbols.
+\end{quote}
 
-TODO \lxAddClass{issue}
+This specification does define any layout algorithm for the {\tt mglyph}
+element. User agents may just ignore it.
+
+\subsubsection{Identifier {\tt <mi>}}
+
+The MathML specification describes {\tt mi} as follows \cite{MathML3}:
+%
+\begin{quote}
+  An {\tt mi} element represents a symbolic name or arbitrary text that should
+  be rendered as an identifier.
+\end{quote}
+
+In general, the {\tt mi} element must be treated the same as the {\tt mtext}
+element. However, when the {\tt mathvariant} on an {\tt mi} element is
+{\tt none} and the {\tt mi} content is made of a single character then the
+element must behave as if {\tt mathvariant} was actually set to {\tt italic}.
+
+\subsubsection{Number {\tt <mn>}}
+
+The MathML specification describes {\tt mn} as follows \cite{MathML3}:
+%
+\begin{quote}
+  An {\tt mn} element represents a "numeric literal" or other data that should
+  be rendered as a numeric literal.
+\end{quote}
+
+For the layout algorithm described in this specification, the
+{\tt mn} element must be treated the same as the {\tt mtext} element.
+
+\subsubsection{Operator, Fence, Separator or Accent {\tt <mo>}}\label{Operators}
+
+The MathML specification describes {\tt mo} as follows \cite{MathML3}:
+%
+\begin{quote}
+  An {\tt mo} element represents an operator or anything that should be
+  rendered as an operator.
+\end{quote}
+
+Many properties of an {\tt mo} element can be specified via attribute on
+that element. The default value of the {\tt form} of an {\tt mo} element is
+obtained as described in section ``Default value of the form attribute'' of
+\cite{MathML3}. From the {\tt form} and the text content, we can deduce other
+default values from the operator dictionary or use the fallback values given
+in ``Dictionary-based attributes'' of \cite{MathML3}.
+
+The leading space {\tt lspace} and trailing space {\tt rspace} must be added on
+each side of the {\tt mo} element (or its outermost embellished ancestor).
+
+In most cases, the {\tt mo} element is treated as an {\tt mtext} element.
+However, when an {\tt mo} element with a single character must be displayed as
+a large operator then instead we use the {\tt MathVariants\lxAddClass{MATH}}
+table to try and find a glyph of height at least {\tt DisplayOperatorMinHeight}
+(figure \ref{fig:LargeOpVariant}). Because this parameter does not always give
+the best size, user agents may also use the following heuristic: ensure
+that the large variant height is at least $2$ times as large as the base height
+for integrals and $\sqrt{2}$ times as large as the base height for other
+operators.
+
+\begin{figure}
+\centering
+  \begin{tikzpicture}[yscale=-1]
+
+    \begin{scope}[xscale=.1,yscale=.1]
+    \fill[black](63,71) .. controls (71,59) and (80,48) .. (88,36) .. controls (82,24) and (72,14) .. (65,2) .. controls (67,0) and (71,2) .. (75,1) .. controls (87,1) and (99,1) .. (111,1) .. controls (110,5) and (112,16) .. (109,16) .. controls (108,8) and (100,4) .. (92,6) .. controls (87,5) and (73,4) .. (82,11) .. controls (85,20) and (102,29) .. (93,38) .. controls (87,46) and (81,54) .. (75,62) .. controls (86,61) and (100,65) .. (110,58) .. controls (112,55) and (116,50) .. (114,57) .. controls (115,66) and (111,75) .. (100,71) .. controls (88,71) and (75,71) .. (63,71);
+    \draw[blue,<->] (-25,11)node[left]{Base Height} -- (-25, 60);
+
+    \draw[red,->] (20,30) -- (70,30);
+    \draw[red,->] (20,40) -- (70,40);
+    \draw[red,->] (20,50) -- (70,50);
+
+    \begin{scope}[shift={(-25,0)}]
+    \fill[black](10,49) .. controls (16,43) and (23,34) .. (14,27) .. controls (12,22) and (1,13) .. (5,11) .. controls (16,11) and (27,11) .. (39,11) .. controls (40,15) and (38,27) .. (35,17) .. controls (29,12) and (20,15) .. (13,15) .. controls (15,22) and (30,29) .. (23,38) .. controls (20,43) and (5,56) .. (18,54) .. controls (26,57) and (36,52) .. (39,48) .. controls (40,57) and (36,63) .. (28,60) .. controls (19,60) and (10,60) .. (2,60) .. controls (5,56) and (7,53) .. (10,49);
+    \draw[blue,<->] (145,0)node[right]{Large Variant Height} -- (145, 72);
+    \end{scope}
+    \end{scope}
+\end{tikzpicture}
+\caption{Base and displaystyle sizes of the summation symbol}
+\label{fig:LargeOpVariant}
+\end{figure}
+
+When an {\tt mo} element with a single character must be displayed as a
+horizontal or vertical
+operator then instead of displaying the normal character we use
+the {\tt MathVariants\lxAddClass{MATH}} table to try and find a glyph
+that has at least the desired size or an assembly from several glyphs
+to cover at least the desired size
+(figure \ref{fig:StretchyOperators}). The rules for vertical stretching
+are a bit more complicated and are described in section
+``Vertical Stretching Rules'' of \cite{MathML3}.
+Use the {\tt AxisHeight\lxAddClass{MATH}} value as the math axis.
+
+\begin{figure}
+\centering
+  \begin{tikzpicture}[yscale=-1]
+
+    \begin{scope}[xscale=.1,yscale=.1]
+
+      \fill[blue] (11,109) .. controls (9,108) and (8,107) .. (8,102) .. controls (8,98) and (8,97) .. (6,95) .. controls (4,94) and (4,94) .. (6,93) .. controls (8,92) and (8,91) .. (8,86) .. controls (8,81) and (9,81) .. (11,80) .. controls (15,78) and (15,78) .. (13,80) .. controls (11,81) and (10,83) .. (10,86) .. controls (10,89) and (10,92) .. (9,93) .. controls (7,94) and (7,95) .. (9,96) .. controls (10,97) and (10,99) .. (10,102) .. controls (10,106) and (11,107) .. (13,108) .. controls (15,110) and (14,110) .. (11,109);
+      \draw[blue] (10,120) node[below]{Base Size};
+
+      \fill[green] (172,142) .. controls (166,138) and (165,135) .. (165,120) .. controls (165,105) and (164,101) .. (160,98) -- (157,96) -- (160,94) .. controls (164,90) and (165,86) .. (165,71) .. controls (165,56) and (166,53) .. (172,50) .. controls (175,47) and (176,47) .. (176,49) .. controls (176,49) and (175,50) .. (174,50) .. controls (173,51) and (171,52) .. (170,54) .. controls (169,57) and (168,59) .. (168,72) .. controls (168,87) and (168,90) .. (163,94) -- (160,96) -- (163,98) .. controls (168,102) and (168,104) .. (168,120) .. controls (168,132) and (169,134) .. (170,137) .. controls (171,139) and (173,141) .. (174,141) .. controls (175,142) and (176,142) .. (176,143) .. controls (176,144) and (175,144) .. (172,142);
+      \fill[green] (136,129) .. controls (135,129) and (134,127) .. (132,126) .. controls (129,123) and (129,123) .. (129,112) .. controls (129,102) and (129,101) .. (127,99) .. controls (126,98) and (124,97) .. (123,97) .. controls (123,97) and (124,95) .. (126,93) -- (129,90) -- (129,79) .. controls (129,70) and (130,69) .. (132,66) .. controls (133,65) and (135,64) .. (136,63) .. controls (139,62) and (139,63) .. (136,65) -- (132,68) -- (132,79) .. controls (132,91) and (132,91) .. (129,93) -- (126,96) -- (129,99) -- (132,103) -- (132,113) .. controls (132,122) and (133,124) .. (134,126) .. controls (135,127) and (137,128) .. (137,128) .. controls (139,129) and (138,130) .. (136,129);
+      \fill[green] (102,118) .. controls (99,116) and (98,115) .. (98,107) .. controls (98,100) and (98,100) .. (96,98) -- (93,96) -- (96,94) .. controls (98,92) and (98,91) .. (98,84) .. controls (98,79) and (99,76) .. (100,75) .. controls (102,74) and (105,72) .. (106,73) .. controls (106,73) and (106,74) .. (105,74) .. controls (102,74) and (100,77) .. (100,85) .. controls (100,90) and (100,92) .. (98,94) .. controls (96,96) and (96,96) .. (98,98) .. controls (100,99) and (100,101) .. (100,107) .. controls (100,115) and (101,116) .. (105,118) .. controls (107,118) and (107,119) .. (105,119) .. controls (104,119) and (103,118) .. (102,118);
+      \draw[green] (125,145) node[below]{Size Variants};
+
+      \fill[gray] (274,199) .. controls (269,196) and (267,192) .. (267,184) .. controls (267,178) and (268,177) .. (269,177) .. controls (270,177) and (270,178) .. (270,184) .. controls (270,192) and (273,197) .. (276,198) .. controls (277,199) and (278,199) .. (278,200) .. controls (278,201) and (277,201) .. (274,199);
+      \fill[gray] (268,151) .. controls (268,140) and (269,138) .. (270,138) .. controls (271,138) and (271,140) .. (271,151) .. controls (271,162) and (271,164) .. (270,164) .. controls (269,164) and (268,162) .. (268,151);
+      \fill[gray] (267,118) .. controls (267,111) and (266,106) .. (262,103) -- (259,101) --  (262,99) .. controls (266,96) and (267,91) .. (267,83) .. controls (267,78) and (268,77) .. (269,77) .. controls (270,77) and (270,78) .. (270,84) .. controls (270,92) and (269,95) .. (265,99) -- (262,101) -- (265,103) .. controls (269,106) and (270,110) .. (270,118) .. controls (270,123) and (270,125) .. (269,125) .. controls (268,125) and (267,123) .. (267,118);
+      \fill[gray](268,52) .. controls (268,41) and (269,39) .. (270,39) .. controls (271,39) and (271,41) .. (271,52) .. controls (271,63) and (271,65) .. (270,65) .. controls (269,65) and (268,63) .. (268,52);
+      \fill[gray] (267,23) .. controls (267,14) and (269,11) .. (274,8) .. controls (277,5) and (278,5) .. (278,7) .. controls (278,7) and (277,8) .. (276,8) .. controls (273,9) and (270,15) .. (270,23) .. controls (270,28) and (270,30) .. (269,30) .. controls (268,30) and (267,28) .. (267,23);
+
+      \draw[->,color=gray] (275,90) -- (310,90);
+      \draw[->,color=gray] (275,100) -- (310,100);
+      \draw[->,color=gray] (275,110) -- (310,110);
+
+      \fill[red] (335,194) .. controls (328,190) and (328,190) .. (328,148) .. controls (328,107) and (328,106) .. (323,102) -- (320,100) -- (323,98) .. controls (328,93) and (328,92) .. (328,51) .. controls (328,10) and (328,10) .. (335,6) .. controls (338,3) and (339,3) .. (339,5) .. controls (339,5) and (338,6) .. (337,6) .. controls (336,7) and (334,8) .. (333,10) .. controls (331,13) and (331,15) .. (331,52) .. controls (331,93) and (331,93) .. (326,98) -- (323,100) -- (326,102) .. controls (331,106) and (331,106) .. (331,148) .. controls (331,185) and (331,186) .. (333,189) .. controls (334,191) and (336,193) .. (337,193) .. controls (338,194) and (339,194) .. (339,195) .. controls (339,196) and (338,196) .. (335,194) -- cycle;
+      \draw[red] (330,200) node[below]{Glyph Assembly};
+    \end{scope}
+    \end{tikzpicture}
+\caption{Base size, size variants and glyph assembly for the left brace}
+\label{fig:StretchyOperators}
+\end{figure}
+
+Add figure for the vertical alignment \lxAddClass{issue}
+
+See section \ref{Mrow} for details about how to treat ``embellished ancestor'',
+and how decide when to display operators larger or when to stretch them
+vertically \& horizontally.
+
+\subsubsection{Text {\tt <mtext>}}
+
+The MathML specification describes {\tt mtext} as follows \cite{MathML3}:
+%
+\begin{quote}
+  An {\tt mtext} element is used to represent arbitrary text that should be
+  rendered as itself.
+\end{quote}
+
+In most cases the {\tt <mtext>} element contains some text that is laid out
+without line
+breaks using complex text layout \cite{CTL}. It is assumed that we can measure
+the ink ascent \& descent, logical ascent \& descent and advance width of
+the text frame and use these values for the MathML box of the {\tt <mtext>}
+element.
+
+If the trailing glyph of the text content has an entry in the
+{\tt MathItalicsCorrectionInfo\lxAddClass{MATH}} table then the specified
+value is used as the italic correction.
+User agents may substract the advance width from the abscissa of the trailing
+ink edge as a heuristic value for the italic correction of the {\tt <mtext>}
+element when it is not specified in the
+{\tt MathItalicsCorrectionInfo\lxAddClass{MATH}} table.
+
+If the text content is made of a single glyph and this glyph
+has an entry in the {\tt MathTopAccentAttachment\lxAddClass{MATH}} table
+then the specified value is used as the top accent attachment of the
+{\tt <mtext>} element.
+
+ssty \lxAddClass{issue}
+
+In the most general case, the {\tt <mtext>} element may contain text with line
+breaks or arbitrary HTML5 phrasing elements. We assume that we can still
+determine logical dimensions
+and max-content width of the text content and use it for both the logical and
+ink values of the {\tt <mtext>} element. The italic correction and
+top accent attachment are assigned the fallback values indicated in section
+\ref{BoxModel}
+
+\subsubsection{Space {\tt <mspace/>}}
+
+The MathML specification describes {\tt ms} as follows \cite{MathML3}:
+%
+\begin{quote}
+An {\tt mspace} empty element represents a blank space of any desired size, as
+set by its attributes.
+\end{quote}
+
+The {\tt mspace} element is laid out as shown on figure
+\ref{fig:MspaceBoxModel}.
+The logical box is determined by the {\tt height}, {\tt depth} and {\tt width}
+attributes defined in \cite{MathML3}. The ink box matches the logical box.
+The {\tt linebreak} attribute on the {\tt <mspace/>} element must be ignored.
+
+\begin{figure}
+\centering
+  \begin{tikzpicture}[yscale=-1]
+  \fill[blue!10] (0,-6) -- (12,-6) -- (12,2) -- (0,2) -- cycle;
+  \draw[dashed,blue] (0,-6) -- (12,-6) -- (12,2) -- (0,2) -- cycle
+  (0,0)--(12,0);
+
+  \draw[<->] (0,1) -- (6,1) node[below]{Width} -- (12,1);
+
+  \draw[<-] (12.25, -6) --
+  (12.25,-3) node[right]{Height} -- (12.25,0);
+  \draw[<-] (12.5, 2) --
+  (12.5,1) node[right]{Depth} -- (12.5,0);
+  \end{tikzpicture}
+\caption{Box model for the {\tt mspace} element}
+\label{fig:MspaceBoxModel}
+\end{figure}
+
+\subsubsection{String Literal {\tt <ms>}}
+
+The MathML specification describes {\tt ms} as follows \cite{MathML3}:
+%
+\begin{quote}
+The {\tt ms} element is used to represent "string literals" in expressions
+meant to be interpreted by computer algebra systems or other systems containing
+"programming languages".
+\end{quote}
+
+In general, {\tt ms} must be treated the same as the {\tt mtext}
+element except that quotes are automatically added around its content.
+The user agents may implement the {\tt lquote} or {\tt rquote} attributes
+with the following style in the user agent stylesheet as suggested in section
+\ref{UAStylesheet}:
+
+\begin{lstlisting}
+ms {
+  display: inline;
+}
+ms:before, ms:after {
+  content: "\0022"
+}
+ms[lquote]:before {
+  content: attr(lquote)
+}
+ms[rquote]:after {
+  content: attr(rquote)
+}
+\end{lstlisting}
 
 \subsection{General Layout Schemata}
 
-\subsubsection{Horizontally Group Sub-Expressions {\tt <mrow>}}
+\subsubsection{Horizontally Group Sub-Expressions {\tt <mrow>}}\label{Mrow}
 
 TODO \lxAddClass{issue}
 
@@ -112,6 +395,10 @@ following style in the user agent stylesheet as suggested in section
   }
 \end{lstlisting}
 %
+
+The axis of the {\tt mfrac} element is always given by
+{\tt AxisHeight\lxAddClass{MATH}}.
+
 The default line thickness is given by
 {\tt FractionRuleThickness\lxAddClass{MATH}}
 Use the {\tt linethickness} attribute \cite{MathML3} to determine the
@@ -123,7 +410,7 @@ The color and visibility of the fraction bar must honor the values given by the
 {\tt color} and {\tt visibility} CSS properties on the {\tt mfrac} element.
 
 If the actual line thickness is nonzero, the {\tt mfrac} element is laid out as
-shown on figure \ref{FractionBoxModel}.
+shown on figure \ref{fig:FractionBoxModel}.
 The width is given by the maximum width of the
 numerator and denominator and the numerator and denominator are horizontally
 centered. A fraction bar with the actual thickness is drawn centered on the
@@ -162,12 +449,14 @@ in display style.
   \draw[->,red] (5,-2.5) -- (5,-3.5) node[left]{Numerator Gap};
   \draw[->,green] (5,-1.5) -- (5,-.5) node[left]{Denominator Gap};
 \end{tikzpicture}
-\label{FractionBoxModel}
+\caption{Box model for the {\tt mfrac} element}
+\label{fig:FractionBoxModel}
 \end{figure}
 
 If the actual line thickness is zero,
 the {\tt mfrac} element is instead laid out as
-shown on figure \ref{StackBoxModel}. The gap between the top and bottom boxes
+shown on figure \ref{fig:StackBoxModel}.
+The gap between the top and bottom boxes
 is equally split around the axis height. The relevant shift values are now
 {\tt StackTopShiftUp\lxAddClass{MATH}},
 {\tt StackBottomShiftDown\lxAddClass{MATH}} in inline style and
@@ -195,7 +484,8 @@ by {\tt StackGapMin\lxAddClass{MATH}} in inline style and
   \draw[<->,blue] (5,-3.5) -- (5,-1.5) node[left]{Stack Gap} --
   (5,-.5);
 \end{tikzpicture}
-\label{StackBoxModel}
+\caption{Box model for the {\tt mfrac} element without bar}
+\label{fig:StackBoxModel}
 \end{figure}
 
 If the numerator is an embellished operator and the {\tt mfrac} element is the
@@ -258,7 +548,8 @@ U+221A SQUARE ROOT via the {\tt rtlm} OpenType feature.
 The color and visibility of the surd and overbar must honor the values given by
 the {\tt color} and {\tt visibility} CSS properties on the {\tt msqrt} element.
 
-The {\tt msqrt} element is laid out as shown on figure \ref{SquareRootBoxModel}.
+The {\tt msqrt} element is laid out as shown on figure
+\ref{fig:SquareRootBoxModel}.
 The width is given by the sum of the width of the surd and of the base.
 The baseline of the square root matches the baseline of the base.
 The ink box is determined from the ink boxes of the surd and base while the
@@ -293,12 +584,13 @@ logical box takes into account the extra ascender
   \draw[<->,red] (4.5,-1.5) --
   (4.5,-1) node[below left]{Radical Gap} -- (4.5,-.5);
 \end{tikzpicture}
-\label{SquareRootBoxModel}
+\caption{Box model for the {\tt msqrt} element}
+\label{fig:SquareRootBoxModel}
 \end{figure}
 
-The {\tt mroot} element is laid out as shown on figure \ref{RootBoxModel}.
+The {\tt mroot} element is laid out as shown on figure \ref{fig:RootBoxModel}.
 We start by ignoring the root index and we layout the base and surd as
-shown on figure \ref{SquareRootBoxModel} to obtain a box $B$.
+shown on figure \ref{fig:SquareRootBoxModel} to obtain a box $B$.
 The horizontal metrics of the {\tt mroot} element are obtained by putting
 {\tt RadicalKernBeforeDegree\lxAddClass{MATH}}
 before the root index, then placing the root index, then a kerning
@@ -347,7 +639,8 @@ the metrics for the whole box of the {\tt mroot} element.
   \draw[->,black] (3.5,.25) -- (3,.25) node[left,rotate=90]
        {Radical Kerning After Degree} -- (1.3,.25);
 \end{tikzpicture}
-\label{RootBoxModel}
+\caption{Box model for the {\tt mroot} element}
+\label{fig:RootBoxModel}
 \end{figure}
 
 \subsubsection{Style Change {\tt <mstyle>}}
@@ -424,7 +717,8 @@ intrinsic widths. Hence in the present specification, if
 the value of the {\tt width} and {\tt lspace} attributes contains
 "height" or "depth" pseudo-units, then they must be ignored.
 
-The {\tt mpadded} element is laid out as shown on figure \ref{MpaddedBoxModel}.
+The {\tt mpadded} element is laid out as shown on figure
+\ref{fig:MpaddedBoxModel}.
 The height, depth and width of the content in \cite{MathML3} corresponds to
 the logical box of the content. The content of the {\tt mpadded} element is
 positioned from the origin of the {\tt mpadded} element as follows: We shift
@@ -462,7 +756,8 @@ metrics.
 
   \draw[->] (2, 0) -- (2,-2) node[left]{Voffset} -- (2,-3);
 \end{tikzpicture}
-\label{MpaddedBoxModel}
+\caption{Box model for the {\tt mpadded} element}
+\label{fig:MpaddedBoxModel}
 \end{figure}
 
 \subsubsection{Making Sub-Expressions Invisible {\tt <mphantom>}}
@@ -548,7 +843,7 @@ compute each notation individually and take the union of the metrics:
   {\tt UnderbarRuleThickness\lxAddClass{MATH}} below.
   The gap between the bar and the content is $3\xi_8$.
   The logical box is obtained by adding some space of width
-  $\xi_8$ on the left of the bar. See figure \ref{MencloseLeftBoxModel}.
+  $\xi_8$ on the left of the bar. See figure \ref{fig:MencloseLeftBoxModel}.
 
   \begin{figure}
 \centering
@@ -575,7 +870,9 @@ compute each notation individually and take the union of the metrics:
   \draw[<->] (2,3) -- (2,3.25)
     node[right]{Underbar Rule Thickness} -- (2,3.5);
 \end{tikzpicture}
-\label{MencloseLeftBoxModel}
+  \caption{Box model for the {\tt left}
+    notation of the {\tt menclose} element}
+\label{fig:MencloseLeftBoxModel}
 \end{figure}
 
 \item The {\tt right} notation is drawn the same as the {\tt left} notation,
@@ -590,7 +887,7 @@ compute each notation individually and take the union of the metrics:
   {\tt OverbarVerticalGap\lxAddClass{MATH}}.
   The logical box is obtained by adding some space of height
   {\tt OverbarExtraAscender\lxAddClass{MATH}} above the bar.
-  See figure \ref{MencloseTopBoxModel}.
+  See figure \ref{fig:MencloseTopBoxModel}.
 
   \begin{figure}
 \centering
@@ -612,7 +909,9 @@ compute each notation individually and take the union of the metrics:
   \draw[<->] (0,0) -- (1,0)node[below]{$4\xi_8$} -- (2,0);
   \draw[<->] (9.5,0) -- (10.5,0)node[below]{$4\xi_8$} -- (11.5,0);
 \end{tikzpicture}
-\label{MencloseTopBoxModel}
+  \caption{Box model for the {\tt roundedbox}
+    notation of the {\tt top} element}
+\label{fig:MencloseTopBoxModel}
 \end{figure}
 
 \item The {\tt bottom} notation is drawn the same as the {\tt top} notation,
@@ -629,7 +928,7 @@ compute each notation individually and take the union of the metrics:
   Using SVG terminology, we draw a rounded rectangle on this expanded box
   with parameters {\tt rx}, {\tt ry} and {\tt stroke-width} set to $\xi_8$
   \cite{SVG11}. To obtain the logical box we again add a space of $\xi_8$ on
-  each side of the ink box. See figure \ref{MencloseRoundedBoxBoxModel}.
+  each side of the ink box. See figure \ref{fig:MencloseRoundedBoxBoxModel}.
 
   \begin{figure}
 \centering
@@ -656,7 +955,9 @@ compute each notation individually and take the union of the metrics:
   \draw[<->] (4,3.5) -- (4,3.75)node[left]{$\xi_8$} -- (4,4);
 
 \end{tikzpicture}
-\label{MencloseRoundedBoxBoxModel}
+  \caption{Box model for the {\tt roundedbox}
+    notation of the {\tt menclose} element}
+\label{fig:MencloseRoundedBoxBoxModel}
 \end{figure}
 
 \item The {\tt actuarial} notation is treated as equivalent to {\tt right top}.
@@ -668,7 +969,7 @@ compute each notation individually and take the union of the metrics:
   of thickness $\xi_8$ and
   vertically centered inside the {\tt menclose} content.
   This does not change the box metrics.
-  See figure \ref{MencloseHorizontalStrikeBoxModel}.
+  See figure \ref{fig:MencloseHorizontalStrikeBoxModel}.
 
   \begin{figure}
 \centering
@@ -685,7 +986,9 @@ compute each notation individually and take the union of the metrics:
 
   \draw[<->] (1,-.25) -- (1,0) node[right]{$\xi_8$} -- (1,.25);
 \end{tikzpicture}
-\label{MencloseHorizontalStrikeBoxModel}
+  \caption{Box model for the {\tt horizontalstrike}
+    notation of the {\tt menclose} element}
+\label{fig:MencloseHorizontalStrikeBoxModel}
 \end{figure}
 
 \item The {\tt verticalstrike} notation is drawn the same as
@@ -699,7 +1002,7 @@ compute each notation individually and take the union of the metrics:
   As an approximation, the ink box
   is set equal to the logical box and obtained by increasing the original box
   from each side by $\frac{\xi_8}{2}$.
-  See figure \ref{MencloseUpDiagonalStrikeBoxModel}.
+  See figure \ref{fig:MencloseUpDiagonalStrikeBoxModel}.
 
   \begin{figure}
 \centering
@@ -718,7 +1021,9 @@ compute each notation individually and take the union of the metrics:
   \draw[<->] (0,0) -- (-.25,0) node[left]{$\frac{\xi_8}{2}$};
   \draw[<->] (3.75,-2) -- (3.75,-2.25) node[above]{$\frac{\xi_8}{2}$};
 \end{tikzpicture}
-\label{MencloseUpDiagonalStrikeBoxModel}
+  \caption{Box model for the {\tt updiagonalstrike}
+    notation of the {\tt menclose} element}
+\label{fig:MencloseUpDiagonalStrikeBoxModel}
 \end{figure}
 
 \item The {\tt downdiagonalstrike} notation is drawn as an
@@ -777,7 +1082,9 @@ compute each notation individually and take the union of the metrics:
   (0,2.371320343559643);
 
 \end{tikzpicture}
-\label{MencloseCircleBoxModel}
+  \caption{Box model for the {\tt circle}
+    notation of the {\tt menclose} element}
+\label{fig:MencloseCircleBoxModel}
 \end{figure}
 
 \item Other {\tt menclose} notations may be ignored.
@@ -833,7 +1140,7 @@ msubsup > :not(:first-child) {
 \end{lstlisting}
 %
 
-The {\tt msub} element is laid out as shown on figure \ref{MsubBoxModel}.
+The {\tt msub} element is laid out as shown on figure \ref{fig:MsubBoxModel}.
 The baseline is the baseline of the base and the subscript is shifted down
 by {\tt SubShift}. {\tt SubShift} is initially set to
 {\tt SubscriptShiftDown\lxAddClass{MATH}}
@@ -871,10 +1178,11 @@ by the italic correction of the base.
    \draw[<->] (7,3) -- (7.25,3)node[right,rotate=90]{SpaceAfterScript} -- (7.5,3);
 
 \end{tikzpicture}
-\label{MsubBoxModel}
+\caption{Box model for the {\tt msub} element}
+\label{fig:MsubBoxModel}
 \end{figure}
 
-The {\tt msup} element is laid out as shown on figure \ref{MsupBoxModel}.
+The {\tt msup} element is laid out as shown on figure \ref{fig:MsupBoxModel}.
 The baseline is the baseline of the base and the superscript is shifted up
 by {\tt SuperShift}. If the {\tt msup} element is cramped
 (section \ref{LaTeX})
@@ -915,10 +1223,12 @@ has {\tt largeop="true"}).
 
   \draw[<->] (8,-3) -- (8.25,-3)node[left,rotate=90]{SpaceAfterScript} -- (8.5,-3);
 \end{tikzpicture}
-\label{MsupBoxModel}
+\caption{Box model for the {\tt msup} element}
+\label{fig:MsupBoxModel}
 \end{figure}
 
-The {\tt msubsup} element is laid out as shown on figure \ref{MsubsupBoxModel}.
+The {\tt msubsup} element is laid out as shown on figure
+\ref{fig:MsubsupBoxModel}.
 The baseline is the baseline of the base, the subscript is shifted down
 by {\tt SubShift} and the superscript is shifted up by {\tt SuperShift}.
 {\tt SubShift} is initially set to {\tt SubscriptShiftDown\lxAddClass{MATH}}.
@@ -976,7 +1286,8 @@ italic correction of the base.
 
 
 \end{tikzpicture}
-\label{MsubsupBoxModel}
+\caption{Box model for the {\tt msubsup} element}
+\label{fig:MsubsupBoxModel}
 \end{figure}
 
 User Agents may ignore the attributes {\tt subscriptshift} and
@@ -1059,7 +1370,7 @@ superscript position then the layout algorithm is the same as section
 always performed.
 
 The general layout of {\tt munderover} is shown on figure
-\ref{MunderoverBoxModel}.
+\ref{fig:MunderoverBoxModel}.
 The overscript is placed above the base, the underscript below the base
 and by default are aligned with respect to their geometrical center.
 If the overscript is an accent and has a {\tt TopAccentAttachment}
@@ -1145,7 +1456,8 @@ We distinguish three cases:
   \draw[orange,dashed](2,2.5) -- (2,-.5) (3,-2.5) --(3,-.5);
 
 \end{tikzpicture}
-\label{MunderoverBoxModel}
+\caption{Box model for the {\tt munderover} element}
+\label{fig:MunderoverBoxModel}
 \end{figure}
 
 The layout of {\tt munder} and {\tt mover} is the same as the one of
@@ -1201,7 +1513,7 @@ Any layout for {\tt mmultiscripts} is acceptable as long as it follows
 the condition of the MathML 3 specification \cite{MathML3} and is consistent
 with section \ref{SubscriptsSuperscripts} for {\tt mmultiscripts}
 contructions that are equivalent to {\tt msubsup}. Here is a possible algorithm
-that is represented on figure \ref{MmultiscriptsBoxModel}.
+that is represented on figure \ref{fig:MmultiscriptsBoxModel}.
 \begin{enumerate}
 \item Determine the vertical shifts for each subscript/superscript pair
   using the algorithm for {\tt msub} (if the superscript is {\tt none}),
@@ -1266,7 +1578,8 @@ that is represented on figure \ref{MmultiscriptsBoxModel}.
   \end{scope}
 
 \end{tikzpicture}
-\label{MmultiscriptsBoxModel}
+\caption{Box model for the {\tt mmultiscripts} element}
+\label{fig:MmultiscriptsBoxModel}
 \end{figure}
 
 \subsection{Tabular Math}\label{TabularMath}

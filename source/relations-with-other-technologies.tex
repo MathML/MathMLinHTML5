@@ -99,6 +99,10 @@ specification may just be ignored. This includes deprecated attributes or
 Content Markup descripted in chapter 4 of the MathML 3 specification
 \cite{MathML3}.
 
+User agents must contain an operator dictionary describing the default
+properties of operators. For interoperability, it is recommended to use the one
+proposed in the non-normative Appendix C of \cite{MathML3}.
+
 \subsection{Text and Math layout}
 
 \subsubsection{Open Font Format}
@@ -127,8 +131,7 @@ script tag is enabled and so user agents must ensure that the text within
 MathML token
 elements is rendered with that script tag. They must also support glyph
 selections via the OpenType font features
-{\tt ssty\lxAddClass{MATH}} (Script Style), {\tt flac\lxAddClass{MATH}}
-(Flattened Accents over Capitals), {\tt dtls\lxAddClass{MATH}} (Dotless Forms)
+{\tt ssty\lxAddClass{MATH}} (Script Style)
 and {\tt rtlm} (Right-to-left mirrored forms) \cite{OpenFontFormat3}.
 At the time of writing, Unicode does not distinguish betwen Chancery and
 Spencerian style for the Unicode MATHEMATICAL SCRIPT characters. Some
