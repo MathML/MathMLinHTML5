@@ -41,9 +41,9 @@ output/webfonts/GUST-FONT-LICENSE.txt: output/math-fonts.zip
 	touch $@
 
 html: output/W3C-REC.css output/style.css output/webfonts/GUST-FONT-LICENSE.txt
-	cd source; \
-	$(LATEXMLC) --dest ../output/index.html \
+	cd output; \
+	$(LATEXMLC) --dest index.html \
                     --format=html5 --pmml --mathtex \
-                    --css=style.css --splitat=section index.tex
+                    --css=style.css --splitat=section ../source/index.tex
 
 .PHONY: clean distclean html
