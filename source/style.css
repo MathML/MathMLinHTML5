@@ -23,7 +23,7 @@
          url('webfonts/latinmodern-math.woff');
 }
 
-body, m|mtext {
+body, m|mtext, .ltx_td {
   font-family: Latin Modern Roman, LMRoman12;
 }
 m|math {
@@ -65,6 +65,9 @@ blockquote {
 }
 .ltx_listingblock {
     color: blue;
+}
+.ltx_td {
+    white-space: normal !important;
 }
 
 /** Open issue ****************************************************************/

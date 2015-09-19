@@ -113,7 +113,7 @@ behavior is specified in math fonts using the USE\_TYPO\_METRICS flag from the
 OS/2 table \cite{OpenFontFormat3} and user agents must honor that flag.
 
 Mathematical formulas can be viewed as an extension of standard text layout
-and so user agents must already support the latter. They must be able to perfom
+and so user agents must support the latter. They must be able to perfom
 complex text layout \cite{CTL} using fonts under the Open Font Format
 \cite{OpenFontFormat3}. In particular, they must implement bidirectional
 rendering and shaping of Arabic scripts.
@@ -133,7 +133,7 @@ elements is rendered with that script tag. They must also support glyph
 selections via the OpenType font features
 {\tt ssty\lxAddClass{MATH}} (Script Style)
 and {\tt rtlm} (Right-to-left mirrored forms) \cite{OpenFontFormat3}.
-At the time of writing, Unicode does not distinguish betwen Chancery and
+At the time of writing, Unicode does not distinguish between Chancery and
 Spencerian style for the Unicode MATHEMATICAL SCRIPT characters. Some
 mathematical fonts rely on {\tt salt} or {\tt ssXY} properties to provide
 both styles. User agents may support the CSS {\tt font-variant-alternates}
@@ -189,117 +189,10 @@ space around embellished operators.
 
 \subsection{CSS Styling}
 
-\subsubsection{Properties}
+\subsubsection{Properties}\label{CSSProperties}
 
-User agents must support the CSS language \cite{CSS2} and take special styling
-into account when building the visual representation of the document.
-We assume that at least the following properties are supported:
-%
-\begin{enumerate}
-\item {\tt display}: at least inline, block, inline-table, table-row,
-  table-cell and none.
-\item {\tt direction}
-\item {\tt font} property and its shorthands.
-\item {\tt background} and {\tt color}
-\item {\tt visibility}
-\end{enumerate}
-
-In addition, this specification introduces new CSS properties that must be
-supported by user agents unless they are able to reproduce equivalent rendering
-behavior described in the present specification:
-
-\begin{itemize}
-
-\item \begin{tabular}{ll}\label{CSSScriptMathStyle}
-  \emph{Name:} & {\tt 'mathml-math-style'} \\
-  \emph{Value:} & display | inline \\
-  \emph{Initial:} & inline \\
-  \emph{Applies to:} & All elements \\
-  \emph{Inherited:} & yes \\
-  \emph{Percentages:} & N/A \\
-  \emph{Media:} & visual \\
-  \emph{Computed value:} & as specified \\
-  \emph{Animatable:} & no \\
-  \emph{Description:} & ...
-\end{tabular}
-
-\item \begin{tabular}{ll}\label{CSSScriptMathVariant}
-  \emph{Name:} & {\tt 'mathml-math-variant'} \\
-  \emph{Value:} & {\tt "none" | "normal" | "bold" | "italic" | "bold-italic" |
-  "double-struck" | "bold-fraktur" | "script" | "bold-script" | "fraktur" |
-  "sans-serif" | "bold-sans-serif" | "sans-serif-italic" |
-  "sans-serif-bold-italic" | "monospace" | "initial" | "tailed" | "looped" |
-  "stretched"} \\
-  \emph{Initial:} & none \\
-  \emph{Applies to:} & All elements \\
-  \emph{Inherited:} & yes \\
-  \emph{Percentages:} & N/A \\
-  \emph{Media:} & visual \\
-  \emph{Computed value:} & as specified \\
-  \emph{Animatable:} & no \\
-  \emph{Description:} & ...
-\end{tabular}
-
-\item \begin{tabular}{ll}\label{CSSScriptLevel}
-  \emph{Name:} & {\tt 'mathml-script-level'} \\
-  \emph{Value:} & {\tt \textless integer\textgreater |
-  increment | increment-twice | increment-if-inline} \\
-  \emph{Initial:} & 0 \\
-  \emph{Applies to:} & All elements \\
-  \emph{Inherited:} & yes \\
-  \emph{Percentages:} & N/A \\
-  \emph{Media:} & visual \\
-  \emph{Computed value:} & as specified \\
-  \emph{Animatable:} & no \\
-  \emph{Description:} & ...
-\end{tabular}
-
-\item \begin{tabular}{ll}\label{CSSScriptSizeMultiplier}
-  \emph{Name:} & {\tt 'mathml-script-size-multiplier'} \\
-  \emph{Value:} & \textless number\textgreater \\
-  \emph{Initial:} & 0 \\
-  \emph{Applies to:} & All elements \\
-  \emph{Inherited:} & yes \\
-  \emph{Percentages:} & N/A \\
-  \emph{Media:} & visual \\
-  \emph{Computed value:} & as specified \\
-  \emph{Animatable:} & no \\
-  \emph{Description:} & ...
-\end{tabular}
-
-\item \begin{tabular}{ll}\label{CSSScriptSizeMinSize}
-  \emph{Name:} & {\tt 'mathml-script-min-size'} \\
-  \emph{Value:} & \textless number\textgreater \\
-  \emph{Initial:} & 0 \\
-  \emph{Applies to:} & All elements \\
-  \emph{Inherited:} & yes \\
-  \emph{Percentages:} & N/A \\
-  \emph{Media:} & visual \\
-  \emph{Computed value:} & as specified \\
-  \emph{Animatable:} & no \\
-  \emph{Description:} & ...
-\end{tabular}
-
-\end{itemize}
-
-Add reference / explanation about these new properties \lxAddClass{issue}
-
-The following MathML attributes must be mapped to CSS properties:
-%
-\begin{enumerate}
-\item The {\tt mathcolor} and {\tt mathbackground} attributes on presentation
-  MathML elements are mapped to {\tt color} and {\tt background} respectively.
-\item The {\tt mathsize}, {\tt mathvariant} attributes on the {\tt math},
-  {\tt mstyle} and token elements are mapped to {\tt font-size} and
-  {\tt mathml-math-variant} respectively.
-\item The {\tt dir} attribute on the {\tt math}, {\tt mstyle}, {\tt mrow} and
-  {\tt token} elements are mapped to {\tt direction}.
-\item The {\tt scriptlevel}, {\tt scriptminsize} and {\tt scriptsizemultiplier}
-  attributes on the {\tt math} and {\tt mstyle} elements are mapped to
-  {\tt mathml-script-level}, {\tt mathml-script-size-multiplier}
-  and {\tt mathml-script-min-size} respectively.
-\end{enumerate}
-
+User agents must support the CSS language \cite{CSS2} and must take special
+styling into account when building the visual representation of the document.
 Many of the MathML elements accept attributes with length value whose
 general syntax is described in section 2.1.5.2 of the MathML specification
 \cite{MathML3}. In general,
@@ -318,11 +211,197 @@ specificities of the MathML specification. In particular, the keywords
 {\tt negativemediummathspace},
 {\tt negativethickmathspace},
 {\tt negativeverythickmathspace} and
-{\tt negativeveryverythickmathspace} keywords must be interpreted as their
+{\tt negativeveryverythickmathspace} must be interpreted as their
 equivalent {\tt em} value. Also, percent and unitless values must be interpreted
 with respect to the appropriate reference value. Note that the {\tt mpadded}
 element also accepts more general length values as discussed in section
 \ref{mpadded}.
+
+User agents must support at least the following properties:
+\begin{enumerate}
+\item {\tt display}: at least inline, block, inline-table, table-row,
+  table-cell and none. It is used for the {\tt math} and tabular
+  elements. Appropriate values may be specified in the user agent stylesheet
+  as described in section \ref{UAStylesheet}.
+\item {\tt direction}. The {\tt dir} attribute on the {\tt math}, {\tt mstyle},
+  {\tt mrow} and {\tt token} elements must be mapped to that property.
+\item {\tt font} property and its shorthands. The {\tt mathsize} attribute on
+  the {\tt math}, {\tt mstyle} and token elements must mapped to that property.
+\item {\tt background} and {\tt color}. The {\tt mathcolor} and
+  {\tt mathbackground} attributes on presentation MathML elements must be
+  mapped to these properties.
+\item {\tt visibility}. It is is used for the {\tt mphantom} element and may be
+  specified in the user agent stylesheet as described in section
+  \ref{UAStylesheet}.
+\end{enumerate}
+
+User agents must support the {\tt displaystyle} attribute. This may be
+implemented using a new {\tt mathml-math-style} property described in
+table \ref{tab:CSSMathStyle}. The expected behavior may be completely
+specified in the user agent stylesheet as described in section
+\ref{UAStylesheet}.
+
+\begin{table}
+\begin{tabular}{ll}
+  \emph{Name:} & {\tt 'mathml-math-style'} \\
+  \emph{Value:} & display | inline \\
+  \emph{Initial:} & inline \\
+  \emph{Applies to:} & all elements \\
+  \emph{Inherited:} & yes \\
+  \emph{Percentages:} & N/A \\
+  \emph{Media:} & visual \\
+  \emph{Computed value:} & as specified \\
+  \emph{Animatable:} & no \\
+  \emph{Description:} & This value indicates the style to use for mathematical
+  formulas. Formulas in {\tt display} mode will typically make more generous
+  use of vertical space than inline formulas. Detailed rules are provided in
+  section \ref{PresentationMarkup}.
+\end{tabular}
+\label{tab:CSSMathStyle}
+\end{table}
+
+User agents must support the {\tt mathvariant} attribute. This may be
+implemented using a new {\tt mathml-math-variant} property described in
+table \ref{tab:CSSMathVariant}. The expected behavior may be implemented by
+mapping {\tt mathvariant} attributes on the {\tt math}, {\tt mstyle} and token
+elements to {\tt mathml-math-variant}. Then during the rendering of text nodes,
+the {\tt mathml-math-variant} value must be taken into account to remap
+some characters to their equivalent code points, as specified by the MathML
+specification. However, as indicated in section \ref{Identifier}, when
+{\tt mathml-math-variant} is {\tt none} on an {\tt mi} element with a single
+character, it must actually be treated as if the mathvariant was {\tt italic} ;
+this can not be handled via CSS-only.
+
+\begin{table}
+\begin{tabular}{ll}
+  \emph{Name:} & {\tt 'mathml-math-variant'} \\
+  \emph{Value:} & {\tt "none" | "normal" | "bold" | "italic" | "bold-italic" |
+  "double-struck" | "bold-fraktur" | "script" | "bold-script" | "fraktur" |
+  "sans-serif" | "bold-sans-serif" | "sans-serif-italic" |
+  "sans-serif-bold-italic" | "monospace" | "initial" | "tailed" | "looped" |
+  "stretched"} \\
+  \emph{Initial:} & none \\
+  \emph{Applies to:} & All elements \\
+  \emph{Inherited:} & yes \\
+  \emph{Percentages:} & N/A \\
+  \emph{Media:} & visual \\
+  \emph{Computed value:} & as specified \\
+  \emph{Animatable:} & no \\
+  \emph{Description:} & When not {\tt none}, characters in text nodes
+  should be rendered using the equivalent Unicode characters of specified
+  mathvariant, taken from the Arabic Mathematical Alphabetic Symbols block
+  (U+1EE00 to U+1EEFF), the Mathematical Alphanumeric Symbols block
+  (U+1D400 to U+1D7FF), or the Letterlike Symbols block (U+2100 to U+214F)
+  that represent "holes" in the alphabets in the
+  Mathematical Alphanumeric Symbols block. If no such Unicode character
+  exists for the specified mathvariant or if that property is {\tt none} then
+  no transformations are performed and the original character is used for the
+  rendering.
+\end{tabular}
+\label{tab:CSSMathVariant}
+\end{table}
+
+User agents must implement the {\tt scriptlevel} attributes and support
+automatic incrementation of the {\tt scriptlevel} described in the MathML
+specification. They may implement the {\tt scriptsizemultiplier} and
+{\tt scriptminsize} attributes or instead just use the default values
+(respectively {\tt 0.71} and {\tt 8pt}). These parameters affect the
+{\tt font-size} property as follows: If the parent
+{\tt font-size} is not already below the {\tt scriptminsize}, then the
+child {\tt font-size} is computed by the following formula:
+%
+\begin{equation}
+\text{FontSize}_{\text{Child}} =
+{\max \left(
+  \text{ScriptMinSize}_{\text{Parent}},
+  {\text{FontSize}_{\text{Parent}} \times
+    {\text{ScriptSizeMultiplier}_{\text{Parent}}^
+      {\left(\text{FontSize}_{\text{Child}} -
+            \text{FontSize}_{\text{Parent}}\right)}
+  }}
+\right)}\label{eq:fontsize}
+\end{equation}
+
+Since the {\tt font-size} change is typically done in a dedicated CSS module of
+user agents, it may be convenient to introduce a new
+{\tt mathml-script-level} property described in table \ref{tab:CSSScriptLevel}.
+User agents may then implement the expected behavior by mapping the
+{\tt scriptlevel} attribute on the {\tt math} and {\tt mstyle} elements to that
+property and adding appropriate rules in the User Agent Stylesheet
+(section \ref{UAStylesheet}). However as indicated in section
+\ref{UnderscriptsOverscripts}, the {\tt scriptlevel} change for underscripts
+and overscripts can not be handled via CSS-only.
+
+If {\tt scriptsizemultiplier} and {\tt scriptminsize}
+are supported, then they may also be implemented using new CSS properties
+{\tt mathml-script-size-multiplier} and {\tt mathml-script-min-size}
+described in tables \ref{tab:CSSScriptSizeMultiplier} and
+\ref{tab:CSSScriptSizeMinSize} respectively. User agents may then implement
+the expected behavior by mapping the {\tt scriptsizemultiplier}
+and {\tt scriptminsize} attributes on the {\tt math} and {\tt mstyle} elements
+to these properties.
+
+\begin{table}
+\begin{tabular}{ll}
+  \emph{Name:} & {\tt 'mathml-script-level'} \\
+  \emph{Value:} &
+       {\tt \textless integer\textgreater |
+         increment-by \textless integer\textgreater | auto} \\
+  \emph{Initial:} & 0 \\
+  \emph{Applies to:} & all elements \\
+  \emph{Inherited:} & yes \\
+  \emph{Percentages:} & N/A \\
+  \emph{Media:} & visual \\
+  \emph{Computed value:} &
+  If the specified value is {\tt auto}, the computed value is obtained by
+  incrementing the parent {\tt mathml-script-level} if and only if
+  {\tt mathml-math-style} is {\tt inline}.
+  If the specified value is {\tt increment-by \textless integer\textgreater},
+  the computed value is obtained by
+  incrementing the parent {\tt mathml-script-level} by the specified integer.
+  Otherwise, the computed value is as specified. \\
+  \emph{Animatable:} & no \\
+  \emph{Description:} & This describes the scriptlevel of a mathematical
+  formulas and affects the computation of {\tt font-size} as specified by
+  equation \ref{eq:fontsize}.
+\end{tabular}
+\label{tab:CSSScriptLevel}
+\end{table}
+
+\begin{table}
+\begin{tabular}{ll}
+  \emph{Name:} & {\tt 'mathml-script-size-multiplier'} \\
+  \emph{Value:} & \textless number\textgreater \\
+  \emph{Initial:} & {\tt 0.71} \\
+  \emph{Applies to:} & All elements \\
+  \emph{Inherited:} & yes \\
+  \emph{Percentages:} & N/A \\
+  \emph{Media:} & visual \\
+  \emph{Computed value:} & as specified \\
+  \emph{Animatable:} & no \\
+  \emph{Description:} & Specifies the multiplier to be used to adjust
+       {\tt font-size} due to changes in scriptlevel as specified by equation
+       \ref{eq:fontsize}.
+\end{tabular}
+\label{tab:CSSScriptSizeMultiplier}
+\end{table}
+
+\begin{table}
+\begin{tabular}{ll}
+  \emph{Name:} & {\tt 'mathml-script-min-size'} \\
+  \emph{Value:} & \textless length\textgreater \\
+  \emph{Initial:} & {\tt 8pt} \\
+  \emph{Applies to:} & All elements \\
+  \emph{Inherited:} & yes \\
+  \emph{Percentages:} & N/A \\
+  \emph{Media:} & visual \\
+  \emph{Computed value:} & as specified \\
+  \emph{Animatable:} & no \\
+  \emph{Description:} & Specifies the minimum font size allowed due to changes
+  in scriptlevel as specified by equation \ref{eq:fontsize}.
+\end{tabular}
+\label{tab:CSSScriptSizeMinSize}
+\end{table}
 
 \subsubsection{User Agent Stylesheet for MathML}\label{UAStylesheet}
 
@@ -440,18 +519,18 @@ mstyle[displaystyle="true"] {
   mathml-math-style: display;
 }
 mfrac > * {
-  mathml-script-level: increment-if-inline;
+  mathml-script-level: auto;
   mathml-math-style: inline;
 }
 mroot > :not(:first-child) {
-  mathml-script-level: increment-twice;
+  mathml-script-level: increment-by 2;
   mathml-math-style: inline;
 }
 msub > :not(:first-child),
 msup > :not(:first-child),
 msubsup > :not(:first-child),
 mmultiscripts > :not(:first-child) {
-  mathml-script-level: increment;
+  mathml-script-level: increment-by 1;
   mathml-math-style: inline;
 }
 munder > :not(:first-child),
