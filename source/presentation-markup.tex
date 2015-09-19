@@ -62,9 +62,13 @@ $$A = \max_{1 \leq i \leq n } {A_i - y_i}$$
 $$B = \max_{1 \leq i \leq n } {B_i + y_i}$$
 %
 
-Note that the schemas in this specification are drawn assuming left-to-right
+Note that the schemas in this document are drawn assuming left-to-right
 directionality. If the CSS {\tt direction} is set to right-to-left, then the
 elements should be layout by making the $x$-axis pointing from right-to-left.
+In this document, we use the terminology of \cite{MathML3}: ``leading''
+means ``left'' in right-to-left and ``right'' in right-to-left mode, while
+``trailing'' means ``right'' in right-to-left and ``left'' in right-to-left
+mode.
 
 The {\tt MathItalicsCorrectionInfo\lxAddClass{MATH}} table contains the italic
 correction of some glyphs, which provides a measure of how slanted the
@@ -113,7 +117,7 @@ the width of the box for top accent attachment.
 \label{fig:TopAccentAttachment}
 \end{figure}
 
-The present specification assumes that $W,w,a,b,A,B$, italic correction
+The present document assumes that $W,w,a,b,A,B$, italic correction
 and top accent attachment are nonnegative values. If computations result
 in negative values, then they must be interpreted as being zero.
 Note that some MathML elements such as {\tt mspace} or {\tt mpadded} may set box
@@ -130,7 +134,7 @@ The mglyph element provides a mechanism for displaying images to represent
 non-standard symbols.
 \end{quote}
 
-This specification does define any layout algorithm for the {\tt mglyph}
+This document does define any layout algorithm for the {\tt mglyph}
 element. User agents may just ignore it.
 
 \subsubsection{Identifier {\tt <mi>}}\label{Identifier}
@@ -156,7 +160,7 @@ The MathML specification describes {\tt mn} as follows \cite{MathML3}:
   be rendered as a numeric literal.
 \end{quote}
 
-For the layout algorithm described in this specification, the
+For the layout algorithm described in this document, the
 {\tt mn} element must be treated the same as the {\tt mtext} element.
 
 \subsubsection{Operator, Fence, Separator or Accent {\tt <mo>}}\label{Operators}
@@ -315,7 +319,19 @@ has an entry in the {\tt MathTopAccentAttachment\lxAddClass{MATH}} table
 then the specified value is used as the top accent attachment of the
 {\tt <mtext>} element.
 
-ssty \lxAddClass{issue}
+If the CSS {\tt direction} on the {\tt <mtext>} element is set to right-to-left
+then user agents must enable the {\tt rtlm} OpenType feature on text nodes
+unless it contradicts what the page author has specified with the
+{\tt font-feature-settings} CSS property.
+
+If {\tt <mtext>} is used at a non-zero scriptlevel then user agents must
+enable the {\tt ssty} OpenType feature on text nodes unless it contradicts
+what the page author has specified with the {\tt font-feature-settings}
+CSS property.
+
+Add detailed rules for {\tt ssty} \lxAddClass{issue}
+
+Should we also give rules for {\tt flac} and {\tt dtls}? \lxAddClass{issue}
 
 In the most general case, the {\tt <mtext>} element may contain text with line
 breaks or arbitrary HTML5 phrasing elements. We assume that we can still
@@ -689,12 +705,12 @@ in one of several ways, depending on the way in which default values are
 specified for an attribute.
 \end{quote}
 
-For the layout algorithm described in this specification, the
+For the layout algorithm described in this document, the
 {\tt mstyle} element must be treated the same as the {\tt mrow} element.
 However, some attributes on the {\tt mstyle} element must be mapped to CSS
 properties as indicated in section \ref{CSSProperties}.
 All the other {\tt mstyle}
-attributes not defined in this specification must be ignored.
+attributes not defined in this document must be ignored.
 
 \subsubsection{Error Message {\tt <merror>}}
 
@@ -710,7 +726,7 @@ or expression sequence.
 multiple children. [...]
 \end{quote}
 
-For the layout algorithm described in this specification, the
+For the layout algorithm described in this document, the
 {\tt merror} element must be treated the same as the {\tt mrow} element.
 The user agent stylesheet must set some CSS properties on the {\tt merror}
 element in order to highlight the error.
@@ -740,7 +756,7 @@ The {\tt mpadded} element accepts a single argument which may be an inferred
 See \cite{MathML3} for how the metrics of {\tt mpadded} element are determined.
 Note that pseudo-units allows horizontal metrics to depend on vertical metrics,
 for example {\tt width="2height"} which can be problematic to determine
-intrinsic widths. Hence in the present specification, if
+intrinsic widths. Hence in the present document, if
 the value of the {\tt width} and {\tt lspace} attributes contains
 "height" or "depth" pseudo-units, then they must be ignored.
 
@@ -800,7 +816,7 @@ The {\tt mphantom} element accepts a single argument possibly being an inferred
 {\tt mrow} of multiple children [...]
 \end{quote}
 
-For the layout algorithm described in this specification, the
+For the layout algorithm described in this document, the
 {\tt mphantom} element must be treated the same as the {\tt mrow} element.
 The user agent stylesheet must set some CSS properties on the {\tt mphantom}
 element in order to hide its content.
@@ -827,7 +843,7 @@ possibly including separators (such as comma) between the arguments.
 [...]
 \end{quote}
 
-This specification does define any layout algorithm for the {\tt mfenced}
+This document does define any layout algorithm for the {\tt mfenced}
 element. User agents may just treat them as equivalent to the {\tt mrow} element
 or to an {\tt merror} element with a relevant error message indicating
 unsupported markup.
@@ -1622,7 +1638,7 @@ commutative diagrams, block matrices and so on.
 \end{quote}
 %
 
-In the present specification, we restrict ourselves to a minimal implementation
+In the present document, we restrict ourselves to a minimal implementation
 compatible with HTML tables. First the {\tt mtable} element must be treated as
 a HTML table and by \cite{MathML3}, {\tt mtable} must accept a
 {\tt displaystyle} attribute with default value {\tt false}. To implement that,
@@ -1696,7 +1712,7 @@ The {\tt mtd} element must also support the {\tt columnspan} (sic) and
 the HTML {\tt colspan} and {\tt rowspan} attributes.
 
 The layout for other tabular elements and attributes are not specified by this
-specification.
+document.
 
 \subsection{Elementary Math}
 
@@ -1727,7 +1743,7 @@ with a stack of the intermediate computations
 [...]
 \end{quote}
 
-This specification does not define any layout algorithm for the {\tt mstack},
+This document does not define any layout algorithm for the {\tt mstack},
 {\tt msgroup}, {\tt msrow}, {\tt msline}, {\tt mscarries}, {\tt mscarry} and
 {\tt mlongdiv} elements.
 
@@ -1754,7 +1770,7 @@ User agents must determine the visible child as follows:
 \item Otherwise, the visible child is undetermined.
 \end{enumerate}
 
-For the layout algorithm described in this specification, the
+For the layout algorithm described in this document, the
 {\tt maction} element must be treated the same as the {\tt mrow} element
 containing its visible child. If it is undetermined,
 the user agent may treat the {\tt maction} element as an
@@ -1766,7 +1782,7 @@ User agents may additionally provide a complete implementation of the
 after the {\tt maction} element receives a {\tt click} event.
 For {\tt statusline} and {\tt tooltip} attributes, they may also display the
 second child in some way when the {\tt maction} element receives a {\tt hover}
-event. This specification does not define how these DOM events are propagated
+event. This document does not define how these DOM events are propagated
 or how to change the default behavior.
 
 Given the similarity with the {\tt semantics} element
@@ -1794,7 +1810,7 @@ more advanced algorithm to determine a visible child:
 \begin{enumerate}
 \item If the {\tt semantics} element has a first child that is any of the
   MathML elements (other than {\tt annotation} and {\tt annotation-xml})
-  whose rendering is described in this specification then use it as the visible
+  whose rendering is described in this document then use it as the visible
   child and stop.
 \item Otherwise, check the children of the {\tt semantics} element in the DOM
   order to try and find the first child that is
@@ -1814,7 +1830,7 @@ more advanced algorithm to determine a visible child:
   undetermined.
 \end{enumerate}
 
-For the layout algorithm described in this specification, the
+For the layout algorithm described in this document, the
 {\tt annotation-xml} element must be treated the same as the {\tt mrow} element,
 the {\tt annotation} element must be treated the same as the {\tt mtext}
 element. The {\tt semantics} element must be treated the same as an

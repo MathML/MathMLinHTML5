@@ -1,3 +1,4 @@
-# MathML in HTML5
+# MathML in HTML5 - Implementation note
 
-Draft for a technical specification to implement MathML in Web rendering engines
+Draft for a detailed technical document to implement MathML in Web rendering
+engines.
