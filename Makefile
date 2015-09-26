@@ -17,7 +17,7 @@ clean:
 	cd output
 
 distclean: clean
-	rm -rf output
+	rm -rf output math-fonts.zip
 
 output/W3C-REC.css:
 	mkdir -p output
@@ -28,12 +28,11 @@ output/style.css: source/style.css
 	mkdir -p output
 	cp $< $@
 
-output/math-fonts.zip:
-	mkdir -p output
+math-fonts.zip:
 	$(WGET) $(MATHML_FONTS) -O $@
 	touch $@
 
-output/webfonts/GUST-FONT-LICENSE.txt: output/math-fonts.zip
+output/webfonts/GUST-FONT-LICENSE.txt: math-fonts.zip
 	mkdir -p output/webfonts
 	$(UNZIP) -j -d output/webfonts $< \
                 MathFonts-gh-pages/LatinModern/*.woff \
