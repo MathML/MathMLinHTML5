@@ -411,7 +411,119 @@ ms[rquote]:after {
 
 \subsubsection{Horizontally Group Sub-Expressions {\tt <mrow>}}\label{Mrow}
 
-\href{https://github.com/MathML/MathMLinHTML5/issues/3}{Describe box model for the {\tt mrow} element} \lxAddClass{issue}
+The MathML specification describes {\tt mrow} as follows \cite{MathML3}:
+%
+\begin{quote}
+  An {\tt mrow} element is used to group together any number of sub-expressions,
+  usually consisting of one or more {\tt mo} elements acting as "operators" on
+  one or more other expressions that are their "operands".
+
+  Several elements automatically treat their arguments as if they were
+  contained in an {\tt mrow} element. See the discussion of inferred {\tt mrow}s
+  in Section 3.1.3 Required Arguments. [...]
+
+  {\tt mrow} elements are typically rendered visually as a horizontal row of
+  their arguments, left to right in the order in which the arguments occur
+  within a context with LTR directionality, or right to left within a context
+  with RTL directionality. The {\tt dir} attribute can be used to specify the
+  directionality for a specific mrow, otherwise it inherits the directionality
+  from the context. [...] The description in Section 3.2.5 Operator, Fence,
+  Separator or Accent {\tt <mo>} of suggested rendering rules for {\tt mo}
+  elements assumes that all horizontal spacing between operators and their
+  operands is added by the rendering of mo elements (or, more generally,
+  embellished operators), not by the rendering of the {\tt mrow}s they are
+  contained in.
+
+  MathML provides support for both automatic and manual linebreaking of
+  expressions (that is, to break excessively long expressions into several
+  lines). All such linebreaks take place within mrows, whether they are
+  explicitly marked up in the document, or inferred (See Section 3.1.3.1
+  Inferred {\tt <mrow>}s), although the control of linebreaking is effected
+  through attributes on other elements (See Section 3.1.7 Linebreaking of
+  Expressions).
+\end{quote}
+
+The {\tt dir} attribute must be mapped to the {\tt direction} CSS property.
+The current version of this document does not define any linebreaking algorithm
+for the {\tt mrow} element, user agents may just ignore linebreaking rules.
+
+User agents must follow the rules for inferred {\tt mrow}s described in
+\cite{MathML3}. For example, to layout
+{\tt <msqrt>child\_1 child\_2 child\_3 ...</msqrt>}, one must follow the layout
+rules described for {\tt msqrt} in section \ref{radicals} using
+the box of {\tt <mrow>child\_1 child\_2 child\_3 ... child\_N</mrow>} as the base.
+
+The {\tt <mrow>child\_1 child\_2 child\_3 ... child\_N</mrow>} element is laid
+out as show on figure \ref{fig:MrowBoxModel}. The boxes of $\text{child}_1$,
+$\text{child}_2$, ... $\text{child}_N$ are put in a horizontal row
+one after the other with all their baselines aligned. As a consequence of this
+and of child box models, graphical elements such as fraction bars
+or symmetric stretchy operators will also be
+aligned along the math axis when the
+{\tt AxisHeight\lxAddClass{MATH}} is unchanged (e.g. in the typical case
+where the math font is unchanged).
+
+As indicated in section \ref{LaTeX}, we generally do not add special spacing
+around the children. For example, the leading and trailing spacing is already
+included in the box metrics of embellished operators. The only exception is
+for the italic correction: when a ``slanted'' child is
+followed by a ``straight'' child, then an horizontal
+space corresponding to the italic correction of the ``slanted'' child is added
+between the two children \cite{OpenFontFormat3}. The italic correction of the
+last child is also added after that child when it is ``slanted'' and when
+the {\tt mrow} has more than one child. In this document, we interpret
+``slanted'' as a child that is not an operator with
+{\tt largeop="true"} (or an embellished operator whose {\tt mo} element core
+has {\tt largeop="true"}) and has nonzero italic correction and ``straight''
+as ``non-slanted''.
+
+When the {\tt mrow} element contains only one child then the previous
+description implies that the box metrics of the {\tt mrow} is the same as
+the one of its unique child. As indicated in section \ref{BoxModel}, we thus
+use the italic correction and top accent attachment of the child as the
+corresponding values of the {\tt mrow} box.
+
+\begin{figure}
+\centering
+  \begin{tikzpicture}[yscale=-1]
+    \MathMLBox{0}{0}{.5}{1.5}{cyan}
+    \draw(1,-1) node {$\text{child}_1$};
+
+    \MathMLBox{2.5}{0}{.5}{1.2}{blue}
+    \draw(3.5,-1) node {$\text{child}_2$};
+
+    \MathMLBox{5}{0}{.5}{1.2}{cyan}
+    \draw(6,-1) node {$\text{child}_3$};
+
+    \MathMLBox{7.5}{0}{1.5}{1}{red}
+    \fill[black] (9,-.5) rectangle (13.5,.5)
+    (11.25,-1) circle (.5) (11.25,1) circle (.5);
+    \draw[<->,red] (7.5,3) -- (8.5,3) node[below]{Leading Space} -- (9,3);
+    \draw[<->,red] (13.5,3) -- (14.5,3) node[below]{Trailing Space} -- (15,3);
+
+    \MathMLBox{15}{0}{.5}{1.4}{cyan}
+    \draw(16,-1) node {$\text{child}_5$};
+
+    \MathMLBox{17.5}{0}{.4}{1.35}{green}
+    \begin{scope}[shift=({17.5,-2.1})]
+    \begin{scope}[xscale=.1,yscale=.1]
+    \fill[black] (1,40) .. controls (0,38) and (3,36) .. (4,38) .. controls (4,38) and (4,42) .. (6,40) .. controls (8,38) and (8,34) .. (9,32) .. controls (11,26) and (12,20) .. (14,15) .. controls (13,13) and (9,14) .. (12,12) .. controls (13,11) and (15,10) .. (16,7) .. controls (17,4) and (21,0) .. (25,1) .. controls (27,1) and (28,3) .. (27,5) .. controls (25,7) and (25,2) .. (23,2) .. controls (21,3) and (20,5) .. (20,7) .. controls (19,8) and (18,11) .. (20,12) .. controls (22,12) and (22,14) .. (20,14) .. controls (18,14) and (17,16) .. (17,18) .. controls (15,25) and (13,32) .. (10,38) .. controls (8,41) and (5,42) .. (2,41) .. controls (1,41) and (1,40) .. (1,40) -- cycle;
+    \draw[black] (10,0) -- (30,0) -- (20,42) -- (0,42) -- cycle;
+    \draw[green,->] (20,42) node[below]{Italic Correction} -- (30,42);
+    \end{scope}
+    \end{scope}
+
+    \MathMLBox{20.5}{0}{.5}{1.1}{blue}
+    \draw(21.5,-1) node {$\text{child}_7$};
+
+    \MathMLBox{23}{0}{.5}{1.2}{cyan}
+    \draw(24,-1) node {$\text{child}_8$};
+
+    \draw[dashed,blue] (0,-4) rectangle (25.5,4) (0,0)--(25.5,0);
+  \end{tikzpicture}
+\caption{Box model for the {\tt mrow} element}
+\label{fig:MrowBoxModel}
+\end{figure}
 
 \subsubsection{Fractions {\tt <mfrac>}}\label{Fractions}
 
