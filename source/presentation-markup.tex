@@ -125,7 +125,48 @@ dimensions to negative values.
 
 \subsubsection{Layout Steps}\label{LayoutSteps}
 
-\href{https://github.com/MathML/MathMLinHTML5/issues/4}{Describe layout steps} \lxAddClass{issue}
+For compatibility with HTML5 rendering, the MathML layout is performed in two
+independent steps:
+
+\begin{enumerate}
+\item In the first step, we determine the intrinsic width $W$ of MathML boxes.
+  To do so we just follow the description given in this document for each
+  MathML box. We rely on vertical positions $x$ as well as values for
+  italic correction and top accent attachment. However, we ignore any vertical
+  positioning or metrics.
+\item In the second step, we do the final layout of MathML boxes following
+  the description given in this document. We obtain all the box metrics,
+  including the actual width $w$, vertical metrics $a,b,A,B$ and
+  vertical positions $y$.
+\end{enumerate}
+
+In order to perform the first step independently of the second one, the
+horizontal metrics must not depend on the vertical metrics. As described in
+section \ref{mpadded}, this adds some restrictions on the possible pseudo-units
+of the {\tt mpadded} element. As indicated in section \ref{Operators},
+the width of size variants or of the glyph assembly used for vertical stretchy
+operators may depend on the target size to cover. Taking the maximum widths
+for all these size variants or for the glyph assembly during the first step
+makes the intrinsic width independent of the target size but may lead to a
+small over-estimation.
+
+Each of this step is done recursively: the metrics of a given MathML box
+are determined from those of the child boxes. User agents must implement
+the ``Exception for embellished operators'' described in \cite{MathML3}.
+This means that the actual stretching of operators described in section
+\ref{Operators} may be ``delayed'' until we reach the top of its embellished
+operator subtree. We then have to apply the current operation again
+to this embellished operator (intrinsic width determination or layout).
+Fortunately, such embellished operator subtrees are not deep in practice.
+
+This document does not require support for operator stretching in table cells.
+The ``delayed'' stretching of all operators must then be performed when we
+arrive at the anonymous {\tt <mrow>} child of {\tt <math>} and {\tt <mtd>}
+elements.
+That way, the intrinsic width of this anonymous {\tt <mrow>} is well-defined
+for the layout of {\tt mtable} elements and of the containers of the
+{\tt <math>} element. Similarly, the final layout of this anonymous
+{\tt <mrow>} is already done when we want to perform the one of its ancestors.
 
 \subsection{Token Elements}
 
@@ -232,6 +273,14 @@ the axis height, using the {\tt AxisHeight\lxAddClass{MATH}} value as the math
 axis. Figure \ref{fig:SymmetricNonSymmetricOperators} compares the symmetric
 and non-symmetric stretching.
 
+The size variant or construction used for vertical stretchy operators will
+depend on the target size to cover. To determine the intrinsic
+width $W$ of the operator, we consider the maximum of all possible widths
+for the base size, size variants and construction available for the given
+operator. It is assumed that the width of the
+operator is almost independent of the stretch size, which is the case in
+practice for most math fonts and operators.
+
 \begin{figure}
 \centering
   \begin{tikzpicture}[yscale=-1]
@@ -288,7 +337,6 @@ and non-symmetric stretching.
 \caption{Symmetric and non-symmetric stretching of vertical operators}
 \label{fig:SymmetricNonSymmetricOperators}
 \end{figure}
-
 
 See section \ref{Mrow} for details about how to treat ``embellished ancestor'',
 and how decide when to display operators larger or when to stretch them
@@ -1195,7 +1243,7 @@ compute each notation individually and take the union of the metrics:
   U+0028 LEFT PARENTHESIS. The rule thickness is $\xi_8$,
   the gap between content and overbar is $3\xi_8$ and the extra ascender
   is $\xi_8$.
-\item  To draw the {\tt circle} notation, we firts consider the ink box of
+\item  To draw the {\tt circle} notation, we first consider the ink box of
   width $w$ and height $h$. We draw the ellipse
   of axes the axes of symmetry of this ink box, of radii
   $\frac{\sqrt{2}}{2} w$ and $\frac{\sqrt{2}}{2} h$ and of thickness $\xi_8$.
