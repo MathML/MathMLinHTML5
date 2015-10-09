@@ -123,6 +123,10 @@ in negative values, then they must be interpreted as being zero.
 Note that some MathML elements such as {\tt mspace} or {\tt mpadded} may set box
 dimensions to negative values.
 
+\subsubsection{Layout Steps}\label{LayoutSteps}
+
+\href{https://github.com/MathML/MathMLinHTML5/issues/4}{Describe layout steps} \lxAddClass{issue}
+
 \subsection{Token Elements}
 
 \subsubsection{Using images to represent symbols {\tt <mglyph/>}}
@@ -329,9 +333,7 @@ enable the {\tt ssty} OpenType feature on text nodes unless it contradicts
 what the page author has specified with the {\tt font-feature-settings}
 CSS property.
 
-Add detailed rules for {\tt ssty} \lxAddClass{issue}
-
-Should we also give rules for {\tt flac} and {\tt dtls}? \lxAddClass{issue}
+\href{https://github.com/MathML/MathMLinHTML5/issues/2}{Add detailed rules for {\tt ssty}} \lxAddClass{issue}
 
 In the most general case, the {\tt <mtext>} element may contain text with line
 breaks or arbitrary HTML5 phrasing elements. We assume that we can still
@@ -409,7 +411,7 @@ ms[rquote]:after {
 
 \subsubsection{Horizontally Group Sub-Expressions {\tt <mrow>}}\label{Mrow}
 
-TODO \lxAddClass{issue}
+\href{https://github.com/MathML/MathMLinHTML5/issues/3}{Describe box model for the {\tt mrow} element} \lxAddClass{issue}
 
 \subsubsection{Fractions {\tt <mfrac>}}\label{Fractions}
 
