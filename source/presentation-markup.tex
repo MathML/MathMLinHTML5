@@ -230,8 +230,10 @@ each side of the {\tt mo} element (or its outermost embellished ancestor).
 In most cases, the {\tt mo} element is treated as an {\tt mtext} element.
 However, when an {\tt mo} element with a single character must be displayed as
 a large operator then instead we use the {\tt MathVariants\lxAddClass{MATH}}
-table to try and find a glyph of height at least {\tt DisplayOperatorMinHeight}
-(figure \ref{fig:LargeOpVariant}). Because this parameter does not always give
+table to try and find a glyph of height at least
+{\tt DisplayOperatorMinHeight\lxAddClass{MATH}}
+(figure \ref{fig:LargeOpVariant}). If none is found, we fallback to the
+largest one. Because this parameter does not always give
 the best size, user agents may also use the following heuristic: ensure
 that the large variant height is at least $2$ times as large as the base height
 for integrals and $\sqrt{2}$ times as large as the base height for other
@@ -1016,7 +1018,7 @@ constructions with {\tt mo} and {\tt mrow} elements.
 Authors are encouraged to use the equivalent constructions with {\tt mo} and
 {\tt mrow} elements, instead of relying on the {\tt mfenced} element.
 
-\subsubsection{Enclose Expression Inside Notation {\tt <menclose>}}
+\subsubsection{Enclose Expression Inside Notation {\tt <menclose>}}\label{menclose}
 
 The MathML specification describes {\tt menclose} as follows \cite{MathML3}:
 %
