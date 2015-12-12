@@ -1351,8 +1351,12 @@ The {\tt msub} element is laid out as shown on figure \ref{fig:MsubBoxModel}.
 The baseline is the baseline of the base and the subscript is shifted down
 by {\tt SubShift}. {\tt SubShift} is initially set to
 {\tt SubscriptShiftDown\lxAddClass{MATH}}
-and is increased until the shift {\tt SubTopShift} for the top of the subscript
-is at least {\tt SubscriptTopMax\lxAddClass{MATH}}. When determining
+and is increased to ensure that the shift {\tt SubTopShift} for the top of the
+subscript is at least {\tt SubscriptTopMax\lxAddClass{MATH}}.
+
+\href{https://github.com/MathML/MathMLinHTML5/issues/8}{Need to describe SubscriptBaselineDropMin and add it on the schema} \lxAddClass{issue}
+
+When determining
 the logical box, a space of width {\tt SpaceAfterScript\lxAddClass{MATH}}
 is added after
 the subscript. By default, the leading edge of the subscript is aligned with
@@ -1396,9 +1400,13 @@ by {\tt SuperShift}. If the {\tt msup} element is cramped
 {\tt SuperShift} is initially set to
 {\tt SuperscriptShiftUpCramped\lxAddClass{MATH}} otherwise
 it is set to {\tt SuperscriptShiftUp\lxAddClass{MATH}}.
-{\tt SuperShift} is increased until the shift for the bottom of the superscript
-{\tt SuperBottomShift} is at least
-{\tt SuperscriptBottomMin\lxAddClass{MATH}}. When determining
+{\tt SuperShift} is increased to ensure that the shift for the bottom of the
+superscript {\tt SuperBottomShift} is at least
+{\tt SuperscriptBottomMin\lxAddClass{MATH}}.
+
+\href{https://github.com/MathML/MathMLinHTML5/issues/8}{Need to describe SuperscriptBaselineDropMax and add it on the schema} \lxAddClass{issue}
+
+When determining
 the logical box, a space of width {\tt SpaceAfterScript\lxAddClass{MATH}}
 is added after
 the superscript. By default, the leading edge of the superscript is aligned with
@@ -1438,21 +1446,29 @@ The {\tt msubsup} element is laid out as shown on figure
 \ref{fig:MsubsupBoxModel}.
 The baseline is the baseline of the base, the subscript is shifted down
 by {\tt SubShift} and the superscript is shifted up by {\tt SuperShift}.
-{\tt SubShift} is initially set to {\tt SubscriptShiftDown\lxAddClass{MATH}}.
+{\tt SubShift} is initially set to {\tt SubscriptShiftDown\lxAddClass{MATH}}
+and is increased to ensure that the shift {\tt SubTopShift} for the top of the
+subscript is at least {\tt SubscriptTopMax\lxAddClass{MATH}}.
+
+\href{https://github.com/MathML/MathMLinHTML5/issues/8}{Need to describe SubscriptBaselineDropMin and SuperscriptBaselineDropMax and add them on the schema} \lxAddClass{issue}
+
 If the {\tt msubsup} element is cramped (section \ref{LaTeX}) then
-{\tt SuperShift} must be at least
+{\tt SuperShift} is initially set to
 {\tt SuperscriptShiftUpCramped\lxAddClass{MATH}} otherwise
-it must be at least {\tt SuperscriptShiftUp\lxAddClass{MATH}}
+it is set to {\tt SuperscriptShiftUp\lxAddClass{MATH}}
 (see section \ref{LaTeX}).
-{\tt SupShift} is increased until the shift for the bottom of the superscript
-{\tt SupBottomShift} is at least {\tt SuperscriptBottomMin\lxAddClass{MATH}}.
+{\tt SupShift} is increased to ensure the shift for the bottom of the
+superscript {\tt SuperBottomShift} is at least {\tt SuperscriptBottomMin\lxAddClass{MATH}}.
+
 We then increase the gap {\tt SubSuperGap} between the bottom of the superscript
-and the top of the subscript until it is at least
+and the top of the subscript to ensure it is at least
 {\tt SubSuperscriptGapMin\lxAddClass{MATH}}:
 This is first done by continuing to shift the superscript up as long as the
 {\tt SupBottomShift} does not exceed
 {\tt SuperscriptBottomMaxWithSubscript\lxAddClass{MATH}}
-and next by continuing to shift the subscript down. When determining
+and next by continuing to shift the subscript down.
+
+When determining
 the logical box, a space of width {\tt SpaceAfterScript\lxAddClass{MATH}}
 is added after
 each script. By default the leading edges of the scripts are aligned with
