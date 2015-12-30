@@ -1238,8 +1238,6 @@ compute each notation individually and take the union of the metrics:
   but the line strike goes from the top left corner to the bottom right corner.
   Using SVG terminology, the
   {\tt stroke-linecap} of the line is {\tt butt} \cite{SVG11}.
-\item The {\tt radical} notation is drawn as described for {\tt msqrt}
-  in section \ref{radicals}.
 \item The {\tt longdiv} notation is drawn as {\tt radical} but independent
   of CSS {\tt direction}. U+221A SQUARE ROOT is replaced with
   U+0028 LEFT PARENTHESIS. The rule thickness is $\xi_8$,
@@ -1294,8 +1292,13 @@ compute each notation individually and take the union of the metrics:
 \label{fig:MencloseCircleBoxModel}
 \end{figure}
 
-\item Other {\tt menclose} notations may be ignored.
+\item This document does define any layout algorithm for other {\tt menclose}
+  notations. User agents may ignore them.
+
 \end{enumerate}
+
+Authors are encouraged to use the {\tt msqrt} element to represent square roots
+instead of relying on the {\tt radical} notation of the {\tt menclose} element.
 
 \subsection{Script and Limit Schemata}\label{ScriptAndLimitSchemata}
 
