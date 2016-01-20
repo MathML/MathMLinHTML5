@@ -1,7 +1,5 @@
 # MathML in HTML5 - Implementation note
 
-## Description
-
 This is a draft for a detailed technical document to implement MathML in Web
 rendering engines. The work is licensed under CC BY, see the
 [`LICENSE.md`](LICENSE.md) file for details. You might also want to take a look
