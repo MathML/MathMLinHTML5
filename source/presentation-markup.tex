@@ -1117,8 +1117,8 @@ compute each notation individually and take the union of the metrics:
   \draw[<->] (0,0) -- (1,0)node[below]{$4\xi_8$} -- (2,0);
   \draw[<->] (9.5,0) -- (10.5,0)node[below]{$4\xi_8$} -- (11.5,0);
 \end{tikzpicture}
-  \caption{Box model for the {\tt roundedbox}
-    notation of the {\tt top} element}
+  \caption{Box model for the {\tt top}
+    notation of the {\tt menclose} element}
 \label{fig:MencloseTopBoxModel}
 \end{figure}
 
@@ -1134,7 +1134,7 @@ compute each notation individually and take the union of the metrics:
 \item To draw the {\tt roundedbox} notation, we consider the box
   obtained by expanding the ink box by $\frac{7\xi_8}{2}$ on each side.
   Using SVG terminology, we draw a rounded rectangle on this expanded box
-  with parameters {\tt rx}, {\tt ry} and {\tt stroke-width} set to $\xi_8$
+  with parameters {\tt rx}, {\tt ry} and {\tt stroke-width} set to $3\xi_8$
   \cite{SVG11}. To obtain the logical box we again add a space of $\xi_8$ on
   each side of the ink box. See figure \ref{fig:MencloseRoundedBoxBoxModel}.
 
@@ -1147,7 +1147,7 @@ compute each notation individually and take the union of the metrics:
 
   \MathMLBox{0}{0}{1.5}{1}{red};
 
-  \draw[black!20,line width=12,rounded corners=12]
+  \draw[black!20,line width=12,rounded corners=36]
   (-1.75,-3.25) -- (9.25,-3.25) -- (9.25,3.25) -- (-1.75,3.25) -- cycle;
 
   \draw[dashed,blue]
@@ -1161,6 +1161,9 @@ compute each notation individually and take the union of the metrics:
   \draw[<->] (4,1.5) -- (4,2.25)node[left]{$3\xi_8$} -- (4,3);
   \draw[<->] (4,3.5) -- (4,3.25)node[left]{$\xi_8$} -- (4,3);
   \draw[<->] (4,3.5) -- (4,3.75)node[left]{$\xi_8$} -- (4,4);
+
+  \draw[dashed](-.5,-3.5) --
+  (-.5,-2.25) -- (-1.25,-2.25)node[below]{$3\xi_8$} -- (-2,-2.25);
 
 \end{tikzpicture}
   \caption{Box model for the {\tt roundedbox}
