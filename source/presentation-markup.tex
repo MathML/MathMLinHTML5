@@ -1035,8 +1035,9 @@ given by the {\tt color} and {\tt visibility} CSS properties on the
 Based on \cite{OpenFontFormat3} \cite{TeXBook}, we use the notation $\xi_8$
 from the TeXBook to denote the default rule thickness and use $3\xi_8$ for gaps.
 We actually let $\xi_8$ be {\tt OverbarRuleThickness\lxAddClass{MATH}}.
-Contrary to what is done in general, the $x$-axis direction of all notations
-except {\tt radical} are independent of the CSS {\tt direction}.
+Note that contrary to what is done in general and unless specified otherwise,
+the $x$-axis direction of notations is assumed to be independent of the CSS
+{\tt direction}.
 In order to determine the metrics of the {\tt menclose} notation, we
 compute each notation individually and take the union of the metrics:
 
@@ -1238,8 +1239,9 @@ compute each notation individually and take the union of the metrics:
   but the line strike goes from the top left corner to the bottom right corner.
   Using SVG terminology, the
   {\tt stroke-linecap} of the line is {\tt butt} \cite{SVG11}.
-\item The {\tt longdiv} notation is drawn as {\tt radical} but independent
-  of CSS {\tt direction}. U+221A SQUARE ROOT is replaced with
+\item The {\tt longdiv} notation is drawn similarly to the {\tt msqrt} element
+  (figure \ref{fig:SquareRootBoxModel}). It is independent of CSS
+  {\tt direction} and U+221A SQUARE ROOT is replaced with
   U+0028 LEFT PARENTHESIS. The rule thickness is $\xi_8$,
   the gap between content and overbar is $3\xi_8$ and the extra ascender
   is $\xi_8$.
