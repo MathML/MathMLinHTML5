@@ -1662,19 +1662,32 @@ We distinguish three cases:
   {\tt OverExtraAscender} and
   {\tt UnderExtraDescender} are zero.
 \item In other cases we proceed as follows.
-  We first ensure that {\tt UnderGap} is at least
-  {\tt UnderbarVerticalGap\lxAddClass{MATH}}.
-  If overscript is an accent
-  and the ink ascent of the base does not exceed
-  {\tt AccentBaseHeight\lxAddClass{MATH}}
-  then we just align the baseline of the overscript with the baseline
-  of the base. Otherwise, we ensure that {\tt OverGap} is at least
-  {\tt OverbarVerticalGap\lxAddClass{MATH}}. Finally,
+  There are not any specific conditions to satisfy on {\tt OverShift} or
+  {\tt UnderShift}.
   {\tt OverExtraAscender} and
   {\tt OverExtraAscender} are respectively set to
   {\tt OverbarExtraAscender\lxAddClass{MATH}}
   and {\tt UnderExtraDescender\lxAddClass{MATH}}.
+  We set {\tt UnderGap} to {\tt UnderbarVerticalGap\lxAddClass{MATH}}
+  if the underscript is not an accent and to zero otherwise.
+  We set {\tt OverGap} to {\tt OverbarVerticalGap\lxAddClass{MATH}}
+  if the overscript is not an accent and generally to zero otherwise.
+  However, if overscript is an accent and if the base ascent is at most
+  {\tt AccentBaseHeight\lxAddClass{MATH}} then we actually set {\tt OverGap} to
+  their nonnegative difference.
 \end{enumerate}
+
+Remark: For accent overscripts and bases with ascents that are at most
+{\tt AccentBaseHeight\lxAddClass{MATH}}, the rule from
+\cite{OpenFontFormat3} \cite{TeXBook} is actually to align the baselines of the
+overscripts and of the bases. This assumes that accent glyphs are designed in
+such a way that their ink bottoms are more or less
+{\tt AccentBaseHeight\lxAddClass{MATH}} above their baselines. Hence, the
+previous rule will guarantee that all the overscript bottoms are aligned while
+still avoiding collision with the bases. However, MathML can have arbitrary
+accent overscripts so we provide a more general and simpler rule above: Ensure
+that the bottom of overscript is at least
+{\tt AccentBaseHeight\lxAddClass{MATH}} above the baseline of the base.
 
 \begin{figure}
 \centering
