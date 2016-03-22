@@ -1634,7 +1634,7 @@ of the base and the baseline of the overscript, {\tt OverGap} is the distance
 between the top ink of the base and the bottom ink of the overscript,
 {\tt OverExtraAscender} is extra space to add above the overscript when
 determining the logical box. {\tt UnderShift}, {\tt UnderGap} and
-{\tt UnderExtraAscender} are defined similarly for the underscripts.
+{\tt UnderExtraDescender} are defined similarly for the underscripts.
 We distinguish three cases:
 
 \begin{enumerate}
@@ -1647,7 +1647,7 @@ We distinguish three cases:
   {\tt LowerLimitGapMin\lxAddClass{MATH}}, that {\tt UnderShift} is at least
   {\tt LowerLimitBaselineDropMin\lxAddClass{MATH}}.
   {\tt OverExtraAscender} and
-  {\tt UnderExtraAscender} are zero. The
+  {\tt UnderExtraDescender} are zero. The
   underscript is shifted backward by half the italic correction of the base.
   The overscript is shifted forward by half the italic correction of the base.
 \item If the base is a horizontal operator with {\tt stretchy="true"}
@@ -1660,7 +1660,7 @@ We distinguish three cases:
   that {\tt UnderShift} is at least
   {\tt StretchStackBottomShiftDown\lxAddClass{MATH}}.
   {\tt OverExtraAscender} and
-  {\tt UnderExtraAscender} are zero.
+  {\tt UnderExtraDescender} are zero.
 \item In other cases we proceed as follows.
   We first ensure that {\tt UnderGap} is at least
   {\tt UnderbarVerticalGap\lxAddClass{MATH}}.
@@ -1673,7 +1673,7 @@ We distinguish three cases:
   {\tt OverExtraAscender} and
   {\tt OverExtraAscender} are respectively set to
   {\tt OverbarExtraAscender\lxAddClass{MATH}}
-  and {\tt UnderExtraAscender\lxAddClass{MATH}}.
+  and {\tt UnderExtraDescender\lxAddClass{MATH}}.
 \end{enumerate}
 
 \begin{figure}
@@ -1699,7 +1699,7 @@ We distinguish three cases:
   \draw[<->] (1,1.5) -- (1,2.5)node[left]{UnderGap} -- (1,2.75);
   \draw[<->] (3,1.5) -- (3,3)node[right]{UnderShift} -- (3,3.5);
   \draw[<->] (2.5,4.25) --
-             (2.5,4.5)node[right]{UnderExtraAscender} -- (2.5,4.75);
+             (2.5,4.5)node[right]{UnderExtraDescender} -- (2.5,4.75);
 
   \draw[dashed,blue](0,-4.75) rectangle (5,4.75)
   (0,0)--(5,0);
