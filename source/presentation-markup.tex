@@ -271,8 +271,8 @@ to cover at least the desired size
 are a bit more complicated and are described in section
 ``Vertical Stretching Rules'' of \cite{MathML3}. If the operator has property
 {\tt symmetric="true"}, it must be stretched symmetrically with respect to
-the axis height, using the {\tt AxisHeight\lxAddClass{MATH}} value as the math
-axis. Figure \ref{fig:SymmetricNonSymmetricOperators} compares the symmetric
+the math axis, which is given by the {\tt AxisHeight\lxAddClass{MATH}} value.
+Figure \ref{fig:SymmetricNonSymmetricOperators} compares the symmetric
 and non-symmetric stretching.
 
 The size variant or construction used for vertical stretchy operators will
@@ -1881,6 +1881,10 @@ attribute:
   }
 \end{lstlisting}
 %
+
+By default, user agents must align the vertical center of the table on the
+math axis, which is provided by the {\tt AxisHeight\lxAddClass{MATH}} value.
+User agents may also support non-default {\tt align} attribute values.
 
 The {\tt mtr} and {\tt mlabeledtr} elements must be treated as HTML table rows
 and the label of {\tt mlabeledtr} element must be hidden by default.
