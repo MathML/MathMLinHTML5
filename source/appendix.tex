@@ -3,7 +3,7 @@
 \section{MathML}
 
 The {\tt mstyle} element duplicates the CSS inheritance mechanism in a
-CSS-incompatible way and has ugly exceptions to workaround the fact that
+CSS-incompatible way and has many exceptions to workaround the fact that
 attribute names may be used for different purposes. In practice, many of its
 attributes are not useful and never used. It is a burden for implementers since
 they essentially have to reimplement a specific ``attribute'' inheritance
@@ -18,7 +18,7 @@ These attributes actually correspond to what is used in practice.
 The {\tt <mfenced>} element is just a
 ``convenient form in which to express common constructs involving fences''
 but is strictly equivalent to an expanded form with {\tt <mrow>} and
-{\tt <mo>} elements and has many horrible exceptions to handle.
+{\tt <mo>} elements and has many exceptions to handle.
 It is thus not actually necessary and just requires more
 code for implementers and may lead to rendering inconsistencies with the
 expanded form. It requires web rendering engines to create many
