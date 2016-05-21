@@ -2,6 +2,8 @@
 
 \section{MathML}
 
+{\em This section is non-normative.}
+
 The {\tt mstyle} element duplicates the CSS inheritance mechanism in a
 CSS-incompatible way and has many exceptions to workaround the fact that
 attribute names may be used for different purposes. In practice, many of its
@@ -51,6 +53,8 @@ proposed in section \label{LaTeX}.
 
 \section{CSS}
 
+{\em This section is non-normative.}
+
 Some {\tt mstyle} attributes follow the standard CSS inheritance and can be
 easily implemented by mapping them to CSS properties. Five new CSS properties
 would be needed for that purpose and are proposed in section
@@ -70,6 +74,8 @@ almost always used for the two last properties. Hence, these three first
 properties seem the most important to consider.
 
 \section{OpenType}
+
+{\em This section is non-normative.}
 
 It is not clear how the {\tt DisplayOperatorMinHeight\lxAddClass{MATH}} is
 supposed to be used or whether it is really reliable. More specifically,
@@ -105,3 +111,38 @@ specification. Some rendering suggestions are given based on the value of
 {\tt OverbarRuleThickness\lxAddClass{MATH}} but perhaps new values should be
 introduced in the {\tt MathConstants\lxAddClass{MATH}} subtable to cover these
 notations.
+
+\section{Image Fallback}\label{ImageFallback}
+
+{\em This section is non-normative.}
+
+User agents that do not support MathML may decide to
+render the fallback content provided by the {\tt altimg*} attributes in some
+situations e.g. when they are specified or
+under a preference option. In that case, an approximate implementation is to
+render the {\tt math} element as a HTML {\tt img} element with the
+value of {\tt altimg} as an {\tt src} attribute, the value of
+{\tt alttext} as an {\tt alt} attribute, the value of {\tt altimg-width} as
+the CSS {\tt width} property, the value of {\tt altimg-height} as
+the CSS {\tt height} property and the value of {\tt altimg-valign} as
+the CSS {\tt vertical-align} property \cite{HTML5} \cite{CSS2}. Here is a
+partial implementation using the {\tt attr()} function of \cite{CSS3Values}:
+%
+\begin{lstlisting}
+math {
+  display: inline;
+}
+math[display="block"] {
+  display: block;
+  text-align: center;
+}
+math {
+  background-image: attr(altimg url);
+  width: attr(altimg-width length);
+  height: attr(altimg-height length);
+  vertical-align: attr(altimg-valign length);
+}
+math > * {
+  display: none;
+}
+\end{lstlisting}

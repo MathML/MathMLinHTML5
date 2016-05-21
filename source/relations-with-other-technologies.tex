@@ -57,36 +57,10 @@ mrow[href] {
 
 The toplevel {\tt math} element accepts the {\tt altimg}, {\tt altimg-width},
 {\tt altimg-height}, {\tt altimg-valign} and {\tt alttext} attributes.
-These attributes allow to specify fallback content and may just be ignored.
-User agents that do not fully implement this document may decide to
-render this fallback content in some situations e.g. when they are specified or
-under a preference option. In that case, an approximate implementation is to
-render the {\tt math} element as a HTML {\tt img} element with the
-value of {\tt altimg} as an {\tt src} attribute, the value of
-{\tt alttext} as an {\tt alt} attribute, the value of {\tt altimg-width} as
-the CSS {\tt width} property, the value of {\tt altimg-height} as
-the CSS {\tt height} property and the value of {\tt altimg-valign} as
-the CSS {\tt vertical-align} property \cite{HTML5} \cite{CSS2}. Here is a
-partial implementation using the {\tt attr()} function of \cite{CSS3Values}:
-%
-\begin{lstlisting}
-math {
-  display: inline;
-}
-math[display="block"] {
-  display: block;
-  text-align: center;
-}
-math {
-  background-image: attr(altimg url);
-  width: attr(altimg-width length);
-  height: attr(altimg-height length);
-  vertical-align: attr(altimg-valign length);
-}
-math > * {
-  display: none;
-}
-\end{lstlisting}
+These attributes allow to specify fallback content and must be ignored by
+user agents for rendering purpose. User agents that do not follow the current
+implementation note, may follow implementation suggestions from Appendix
+\ref{ImageFallback} in order to use that fallback image.
 
 The toplevel {\tt math} element also accepts the {\tt display} attribute,
 {\tt mathcolor}, {\tt mathbackground} attributes as well as other attributes
