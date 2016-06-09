@@ -1420,14 +1420,14 @@ The baseline is the baseline of the base while the baseline of the script is
 shifted up by {\tt SuperShift}, which is the minimal value honoring the
 following conditions:
 \begin{enumerate}
-\item {\tt SubShift} is at least
+\item {\tt SuperShift} is at least
   {\tt SuperscriptShiftUpCramped\lxAddClass{MATH}} if the {\tt msup} element is
   cramped (section \ref{LaTeX}) or at least
   {\tt SuperscriptShiftUp\lxAddClass{MATH}} otherwise.
 \item The bottom of the superscript {\tt SuperBottom} with respect to the
   baseline is not below {\tt SuperscriptBottomMin\lxAddClass{MATH}}.
 \item The drop {\tt SuperscriptBaselineDrop} from the top of the base to
-  the baseline of the script is at most {\tt SuperscriptBaselineDropMax}.
+  the baseline of the script is at most {\tt SuperscriptBaselineDropMax\lxAddClass{MATH}}.
 \end{enumerate}
 
 When determining
@@ -1458,7 +1458,7 @@ has {\tt largeop="true"}).
    (5.25,0)node[below]{ItalicCorrection} -- (5.5,0);
   \draw[dashed,orange] (5.5,0)--(5.5,-3);
 
-  \draw[->] (7,0) -- (7,-1.5)node[below,rotate=90]{SuperBottomShift} -- (7,-2.25);
+  \draw[->] (7,0) -- (7,-1.5)node[below,rotate=90]{SuperBottom} -- (7,-2.25);
 
   \draw[<->] (8,-3) -- (8.25,-3)node[left,rotate=90]{SpaceAfterScript} -- (8.5,-3);
 
@@ -1483,22 +1483,23 @@ following conditions:
 \item The top of the subscript {\tt SubTop} with respect to the baseline
   is not above {\tt SubscriptTopMax\lxAddClass{MATH}}.
 \item The drop {\tt SuperscriptBaselineDrop} from the top of the base to
-  the baseline of the script is at most {\tt SuperscriptBaselineDropMax}.
+  the baseline of the superscript is at most {\tt SuperscriptBaselineDropMax\lxAddClass{MATH}}.
 \item {\tt SubShift} is at least
   {\tt SuperscriptShiftUpCramped\lxAddClass{MATH}} if the {\tt msup} element is
   cramped (section \ref{LaTeX}) or at least
   {\tt SuperscriptShiftUp\lxAddClass{MATH}} otherwise.
 \item The bottom of the superscript {\tt SuperBottom} with respect to the
   baseline is not below {\tt SuperscriptBottomMin\lxAddClass{MATH}}.
-\item The drop {\tt SuperscriptBaselineDrop} from the top of the base to
-  the baseline of the script is at most {\tt SuperscriptBaselineDropMax}.
+\item The drop {\tt SubscriptBaselineDrop} from
+  the bottom of the base to the the baseline of the subscript is at least
+  {\tt SubscriptBaselineDropMin\lxAddClass{MATH}}.
 \end{enumerate}
 
 We then increase the gap {\tt SubSuperGap} between the bottom of the superscript
 and the top of the subscript to ensure it is at least
 {\tt SubSuperscriptGapMin\lxAddClass{MATH}}:
 This is first done by continuing to shift the superscript up as long as the
-{\tt SuperBottomShift} does not exceed
+{\tt SuperBottom} does not exceed
 {\tt SuperscriptBottomMaxWithSubscript\lxAddClass{MATH}}
 and next by continuing to shift the subscript down.
 
