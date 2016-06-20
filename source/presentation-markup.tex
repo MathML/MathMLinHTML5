@@ -703,6 +703,10 @@ by {\tt StackGapMin\lxAddClass{MATH}} in inline style and
 \label{fig:StackBoxModel}
 \end{figure}
 
+In order to prevent the fraction bar to be confused with other items around
+the fraction (e.g. minus sign or the bar of another fraction), a 1 pixel space
+must actually be added on each side of the {\tt mfrac} element.
+
 If the numerator is an embellished operator and the {\tt mfrac} element is the
 outermost element in this embellished operator hierarchy then the operator
 leading and trailing spaces must be added around the fraction.
